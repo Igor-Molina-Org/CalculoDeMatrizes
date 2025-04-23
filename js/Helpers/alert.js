@@ -40,7 +40,7 @@ export function customizedAlert(
   modalContainer.append(errorContainer);
 
   closeButton.addEventListener("click", () => {
-    if(errorContainer.nextElementSibling == null){
+    if(!errorContainer.nextElementSibling && !errorContainer.previousElementSibling){
       generateMatrixButton.removeAttribute("disabled")
     }
     
