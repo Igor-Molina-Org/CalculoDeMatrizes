@@ -1,3 +1,4 @@
+import { customizedAlert } from "./alert.js";
 import * as MatrixHelper from "./matrixHelper.js";
 
 export const generateMatrixButton = document.querySelector(
@@ -8,7 +9,7 @@ const domOperator = document.querySelector("#operator");
 
 export function getAndValidateHeaderInputs() {
   let matrixSizes = getMatrixSizes();
-  let operator = getOperator();
+  let operator = domOperator.value;
   let matrixSizesOk;
   let sizeCompatiblityOk;
 
@@ -33,19 +34,6 @@ function getMatrixSizes() {
   return matrixSizes;
 }
 
-function getOperator() {
-  let operatorValue = domOperator.value;
-
-  //prettier-ignore
-  if (operatorValue === "+" || operatorValue === "-" || 
-      operatorValue === "*" || operatorValue === "/") {
-    return operatorValue;
-  } else {
-    alert("Insira um operador válido ( + | - | * | / )");
-    domOperator.value = "";
-  }
-}
-
 function checkMatrixSizes(matrixSizes) {
   let isSizeOk = true;
   for (let i = 0; i < matrixSizes.length; i++) {
@@ -54,7 +42,7 @@ function checkMatrixSizes(matrixSizes) {
     }
   }
   if (!isSizeOk) {
-    alert(
+    customizedAlert(
       "Insira uma matriz com no mínimo 2 linhas e 2 colunas, e no máximo 6 linhas e 6 colunas"
     );
   }
@@ -72,7 +60,7 @@ function checkMatrixSizesCompatibility(matrixSizes, operator) {
         matrixSizes[1] != matrixSizes[3]
       ) {
         areSizesCompatible = false;
-        alert(
+        customizedAlert(
           "Para realizar as operações de soma ou subtração, é necessário que as matrizes tenham o mesmo tamanho"
         );
       }
@@ -80,7 +68,7 @@ function checkMatrixSizesCompatibility(matrixSizes, operator) {
     case "*":
       if (matrixSizes[1] != matrixSizes[2]) {
         areSizesCompatible = false;
-        alert(
+        customizedAlert(
           "O número de colunas da primeira matriz deve ser igual número de linhas da segunda matriz."
         );
       }
@@ -92,9 +80,14 @@ function checkMatrixSizesCompatibility(matrixSizes, operator) {
         matrixSizes[0] != matrixSizes[2]
       ) {
         areSizesCompatible = false;
-        alert("As matrizes precisam ser quadradas e ter as mesmas dimensões.");
+        customizedAlert(
+          "As matrizes precisam ser quadradas e ter as mesmas dimensões."
+        );
       }
       break;
+    default:
+      customizedAlert("Insira um operador válido! Eles são: ( + | - | * | / )");
+      areSizesCompatible = false;
   }
   return areSizesCompatible;
 }
@@ -102,56 +95,58 @@ function checkMatrixSizesCompatibility(matrixSizes, operator) {
 export function mountMatrix() {
   let headerInputValues = getAndValidateHeaderInputs();
 
-  let matrix1Rows = headerInputValues.matrixSizes[0];
-  let matrix1Columns = headerInputValues.matrixSizes[1];
-  let matrix2Rows = headerInputValues.matrixSizes[2];
-  let matrix2Columns = headerInputValues.matrixSizes[3];
+  if (headerInputValues) {
+    let matrix1Rows = headerInputValues.matrixSizes[0];
+    let matrix1Columns = headerInputValues.matrixSizes[1];
+    let matrix2Rows = headerInputValues.matrixSizes[2];
+    let matrix2Columns = headerInputValues.matrixSizes[3];
 
-  let matrix1Container = document.querySelector(".matrix1Container");
-  clearNodeChildren(matrix1Container);
+    let matrix1Container = document.querySelector(".matrix1Container");
+    clearNodeChildren(matrix1Container);
 
-  MatrixHelper.createMatrix(matrix1Rows, matrix1Columns, ".matrix1Container");
+    MatrixHelper.createMatrix(matrix1Rows, matrix1Columns, ".matrix1Container");
 
-  let operatorContainer = document.querySelector(".operatorContainer");
-  let equalsContainer = document.querySelector(".equalsContainer");
-  clearNodeChildren(operatorContainer);
-  clearNodeChildren(equalsContainer);
+    let operatorContainer = document.querySelector(".operatorContainer");
+    let equalsContainer = document.querySelector(".equalsContainer");
+    clearNodeChildren(operatorContainer);
+    clearNodeChildren(equalsContainer);
 
-  const operatorValue = document.createElement("input");
-  operatorValue.value = headerInputValues.operator;
-  operatorValue.readOnly = true;
-  operatorContainer.append(operatorValue);
+    const operatorValue = document.createElement("input");
+    operatorValue.value = headerInputValues.operator;
+    operatorValue.readOnly = true;
+    operatorContainer.append(operatorValue);
 
-  const equalsButton = document.createElement("button");
-  equalsButton.classList.add("equalsButton");
-  equalsButton.textContent = "=";
-  equalsButton.id = "equalsButton";
-  equalsContainer.append(equalsButton);
+    const equalsButton = document.createElement("button");
+    equalsButton.classList.add("equalsButton");
+    equalsButton.textContent = "=";
+    equalsButton.id = "equalsButton";
+    equalsContainer.append(equalsButton);
 
-  let generateResultButton = document.querySelector("#equalsButton");
+    let generateResultButton = document.querySelector("#equalsButton");
 
-  generateResultButton.addEventListener("click", () => {
-    MatrixHelper.calculateMatrix();
-  });
+    generateResultButton.addEventListener("click", () => {
+      MatrixHelper.calculateMatrix();
+    });
 
-  let matrix2Container = document.querySelector(".matrix2Container");
-  clearNodeChildren(matrix2Container);
-  MatrixHelper.createMatrix(matrix2Rows, matrix2Columns, ".matrix2Container");
+    let matrix2Container = document.querySelector(".matrix2Container");
+    clearNodeChildren(matrix2Container);
+    MatrixHelper.createMatrix(matrix2Rows, matrix2Columns, ".matrix2Container");
 
-  let resultMatrix = document.querySelector(".resultMatrix");
-  clearNodeChildren(resultMatrix);
+    let resultMatrix = document.querySelector(".resultMatrix");
+    clearNodeChildren(resultMatrix);
 
-  switch (headerInputValues.operator) {
-    case "+":
-    case "-":
-    case "/":
-      // prettier-ignore
-      MatrixHelper.createMatrix(matrix1Rows, matrix1Columns, ".resultMatrix", "resultMatrixRowDiv");
-      break;
-    case "*":
-      // prettier-ignore
-      MatrixHelper.createMatrix(matrix1Rows, matrix2Columns, ".resultMatrix", "resultMatrixRowDiv");
-      break;
+    switch (headerInputValues.operator) {
+      case "+":
+      case "-":
+      case "/":
+        // prettier-ignore
+        MatrixHelper.createMatrix(matrix1Rows, matrix1Columns, ".resultMatrix", "resultMatrixRowDiv");
+        break;
+      case "*":
+        // prettier-ignore
+        MatrixHelper.createMatrix(matrix1Rows, matrix2Columns, ".resultMatrix", "resultMatrixRowDiv");
+        break;
+    }
   }
 }
 
