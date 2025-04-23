@@ -7,6 +7,12 @@ html {
   width: 100%;
   background-color: grey;
 }
+.pageWrapper {
+  position: relative;
+  min-width: 100vw;
+  min-height: 100vh;
+}
+
 input,
 .equalsContainer button {
   width: 50px;
@@ -76,6 +82,46 @@ input,
   display: flex;
   justify-content: space-between;
   gap: 10px;
+}
+
+.modal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 450px;
+  background-color: #e0f4ff;
+  color: #055160;
+  border: 1px solid #b6e0fe;
+  padding: 8px 15px 15px 15px;
+  border-radius: 8px;
+  font-family: sans-serif;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.alertMessage {
+  margin: 8px 0px 12px 0px;
+}
+.icon img {
+  width: 25px;
+  height: 25px;
+}
+.headerMessage {
+  font-size: 14px;
+  font-weight: bold;
+}
+.closeButton {
+  font-size: 15px;
+  cursor: pointer;
+  color: #055160;
 }
 
 input:invalid {
