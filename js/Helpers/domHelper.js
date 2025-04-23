@@ -108,18 +108,14 @@ export function mountMatrix() {
   let matrix2Columns = headerInputValues.matrixSizes[3];
 
   let matrix1Container = document.querySelector(".matrix1Container");
-  while (matrix1Container.lastElementChild) {
-    matrix1Container.removeChild(matrix1Container.lastElementChild);
-  }
+  clearNodeChildren(matrix1Container);
 
   MatrixHelper.createMatrix(matrix1Rows, matrix1Columns, ".matrix1Container");
 
   let operatorContainer = document.querySelector(".operatorContainer");
   let equalsContainer = document.querySelector(".equalsContainer");
-  if (operatorContainer.lastElementChild || equalsContainer.lastElementChild) {
-    operatorContainer.removeChild(operatorContainer.lastElementChild);
-    equalsContainer.removeChild(equalsContainer.lastElementChild);
-  }
+  clearNodeChildren(operatorContainer);
+  clearNodeChildren(equalsContainer);
 
   const operatorValue = document.createElement("input");
   operatorValue.value = headerInputValues.operator;
@@ -139,15 +135,11 @@ export function mountMatrix() {
   });
 
   let matrix2Container = document.querySelector(".matrix2Container");
-  while (matrix2Container.lastElementChild) {
-    matrix2Container.removeChild(matrix2Container.lastElementChild);
-  }
+  clearNodeChildren(matrix2Container);
   MatrixHelper.createMatrix(matrix2Rows, matrix2Columns, ".matrix2Container");
 
   let resultMatrix = document.querySelector(".resultMatrix");
-  while (resultMatrix.lastElementChild) {
-    resultMatrix.removeChild(resultMatrix.lastElementChild);
-  }
+  clearNodeChildren(resultMatrix);
 
   switch (headerInputValues.operator) {
     case "+":
@@ -160,5 +152,11 @@ export function mountMatrix() {
       // prettier-ignore
       MatrixHelper.createMatrix(matrix1Rows, matrix2Columns, ".resultMatrix", "resultMatrixRowDiv");
       break;
+  }
+}
+
+function clearNodeChildren(DOMnode) {
+  while (DOMnode.lastElementChild) {
+    DOMnode.removeChild(DOMnode.lastElementChild);
   }
 }

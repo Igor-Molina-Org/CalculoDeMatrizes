@@ -13,11 +13,15 @@ export function createMatrix(
     newRow.classList.add(classList);
     for (let j = 0; j < matrixColumns; j++) {
       let newColumn = document.createElement("input");
+      newColumn.type = "number";
       if (classList == "resultMatrixRowDiv") {
         newColumn.readOnly = true;
+        newColumn.value = "";
+      } else {
+        //TODO: Retirar quando for para produção
+        newColumn.value = j;
       }
       newRow.append(newColumn);
-      newColumn.value = j;
     }
     matrixContainer.append(newRow);
   }
