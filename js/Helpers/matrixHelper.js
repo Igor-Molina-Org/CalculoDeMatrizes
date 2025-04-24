@@ -1,5 +1,6 @@
 import * as OperationHelper from "./operationHelper.js";
 import { customizedAlert } from "./alert.js";
+import { clearNodeChildren, getAndValidateHeaderInputs } from "./domHelper.js";
 
 export function createMatrix(
   matrixRows,
@@ -33,6 +34,14 @@ export function calculateMatrix() {
   let matrix2Container = document.querySelector(".matrix2Container");
   let matrix1Values = [];
   let matrix2Values = [];
+  let headerInputValues = getAndValidateHeaderInputs();
+  let operatorContainer = document.querySelector(".operatorContainer");
+  clearNodeChildren(operatorContainer);
+
+  const operatorValue = document.createElement("input");
+  operatorValue.value = headerInputValues.operator;
+  operatorValue.readOnly = true;
+  operatorContainer.append(operatorValue);
 
   if (hasEmptyFieldsInMatrix(matrix1Container) || hasEmptyFieldsInMatrix(matrix2Container)) {
     customizedAlert("Por favor, preencha todos os campos das matrizes antes de calcular.");
@@ -57,8 +66,6 @@ export function calculateMatrix() {
 
   let operator = document.querySelector("#operator").value;
 
-  //TODO: Criar arquivo helper para chamar as funções addMatrix, subtractMatrix,
-  //multiplyMatrix e divideMatrix neste switch case
   switch (operator) {
     case "+":
       let sum = OperationHelper.addMatrices(matrix1Values, matrix2Values);
@@ -71,7 +78,7 @@ export function calculateMatrix() {
           let column = row.querySelector(
             `.resultMatrixRowDiv input:nth-child(${j + 1})`
           );
-          column.value = sum[i][j];
+          column.value = formatValue(sum[i][j]);
         }
       }
       break;
@@ -87,7 +94,7 @@ export function calculateMatrix() {
           let column = row.querySelector(
             `.resultMatrixRowDiv input:nth-child(${j + 1})`
           );
-          column.value = sub[i][j];
+          column.value = formatValue(sub[i][j]);
         }
       }
       break;
@@ -101,18 +108,17 @@ export function calculateMatrix() {
         matrix2Values
       );
 
-      // prettier-ignore
       for (let i = 0; i < rowsMatrix1; i++) {
-          for (let j = 0; j < columnsMatrix2; j++) {
-            let row = document.querySelector(
-              `.resultMatrix div:nth-child(${i + 1})`
-            );
-            let column = row.querySelector(
-              `.resultMatrixRowDiv input:nth-child(${j + 1})`
-            );
-            column.value = multiplication[i][j];
-          }
+        for (let j = 0; j < columnsMatrix2; j++) {
+          let row = document.querySelector(
+            `.resultMatrix div:nth-child(${i + 1})`
+          );
+          let column = row.querySelector(
+            `.resultMatrixRowDiv input:nth-child(${j + 1})`
+          );
+          column.value = formatValue(multiplication[i][j]);
         }
+      }
       break;
 
     case "/":
@@ -137,11 +143,18 @@ export function calculateMatrix() {
           let column = row.querySelector(
             `.resultMatrixRowDiv input:nth-child(${j + 1})`
           );
-          column.value = division[i][j];
+          column.value = formatValue(division[i][j]);
         }
       }
       break;
   }
+}
+
+function formatValue(value) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return value;
+  const decimalPart = num.toString().split(".")[1];
+  return decimalPart && decimalPart.length > 2 ? num.toFixed(2) : num;
 }
 
 function hasEmptyFieldsInMatrix(matrix) {
