@@ -1,4 +1,5 @@
 import * as OperationHelper from "./operationHelper.js";
+import { customizedAlert } from "./alert.js";
 
 export function createMatrix(
   matrixRows,
@@ -32,6 +33,11 @@ export function calculateMatrix() {
   let matrix2Container = document.querySelector(".matrix2Container");
   let matrix1Values = [];
   let matrix2Values = [];
+
+  if (hasEmptyFieldsInMatrix(matrix1Container) || hasEmptyFieldsInMatrix(matrix2Container)) {
+    customizedAlert("Por favor, preencha todos os campos das matrizes antes de calcular.");
+    return;
+  }
 
   matrix1Container.childNodes.forEach((row) => {
     let rowValues = [];
@@ -136,4 +142,18 @@ export function calculateMatrix() {
       }
       break;
   }
+}
+
+function hasEmptyFieldsInMatrix(matrix) {
+  let hasEmpty = false;
+
+  matrix.childNodes.forEach((row) => {
+    row.childNodes.forEach((column) => {
+      if (column.value.trim() === "") {
+        hasEmpty = true;
+      }
+    });
+  });
+
+  return hasEmpty;
 }
