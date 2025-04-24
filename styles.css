@@ -1,3 +1,14 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
 body,
 html {
   margin: 0;
@@ -8,6 +19,8 @@ html {
   background-color: grey;
 }
 .pageWrapper {
+  display: flex;
+  flex-direction: column;
   position: relative;
   min-width: 100vw;
   min-height: 100vh;
@@ -63,6 +76,7 @@ input,
 .mainContent {
   margin: 10px;
   display: flex;
+  flex: 1;
   justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
@@ -122,6 +136,32 @@ input,
   font-size: 15px;
   cursor: pointer;
   color: #055160;
+}
+
+footer {
+  display: flex;
+  background-color: lightblue;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 14px;
+  padding: 5px 0px 5px 0px;
+}
+
+.profileContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 135px;
+  gap: 8px;
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.profileContainer img {
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
 }
 
 input:invalid {
