@@ -66,8 +66,6 @@ export function calculateMatrix() {
 
   let operator = document.querySelector("#operator").value;
 
-  //TODO: Criar arquivo helper para chamar as funções addMatrix, subtractMatrix,
-  //multiplyMatrix e divideMatrix neste switch case
   switch (operator) {
     case "+":
       let sum = OperationHelper.addMatrices(matrix1Values, matrix2Values);
@@ -96,7 +94,7 @@ export function calculateMatrix() {
           let column = row.querySelector(
             `.resultMatrixRowDiv input:nth-child(${j + 1})`
           );
-          column.value = formatValue(sum[i][j]);
+          column.value = formatValue(sub[i][j]);
         }
       }
       break;
@@ -110,18 +108,17 @@ export function calculateMatrix() {
         matrix2Values
       );
 
-      // prettier-ignore
       for (let i = 0; i < rowsMatrix1; i++) {
-          for (let j = 0; j < columnsMatrix2; j++) {
-            let row = document.querySelector(
-              `.resultMatrix div:nth-child(${i + 1})`
-            );
-            let column = row.querySelector(
-              `.resultMatrixRowDiv input:nth-child(${j + 1})`
-            );
-            column.value = formatValue(multiplication[i][j]);
-          }
+        for (let j = 0; j < columnsMatrix2; j++) {
+          let row = document.querySelector(
+            `.resultMatrix div:nth-child(${i + 1})`
+          );
+          let column = row.querySelector(
+            `.resultMatrixRowDiv input:nth-child(${j + 1})`
+          );
+          column.value = formatValue(multiplication[i][j]);
         }
+      }
       break;
 
     case "/":
@@ -153,6 +150,13 @@ export function calculateMatrix() {
   }
 }
 
+function formatValue(value) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return value;
+  const decimalPart = num.toString().split(".")[1];
+  return decimalPart && decimalPart.length > 2 ? num.toFixed(2) : num;
+}
+
 function hasEmptyFieldsInMatrix(matrix) {
   let hasEmpty = false;
 
@@ -165,11 +169,4 @@ function hasEmptyFieldsInMatrix(matrix) {
   });
 
   return hasEmpty;
-}
-
-function formatValue(value) {
-  const num = Number(value);
-  if (!Number.isFinite(num)) return value;
-  const decimalPart = num.toString().split(".")[1];
-  return decimalPart && decimalPart.length > 2 ? num.toFixed(2) : num;
 }
