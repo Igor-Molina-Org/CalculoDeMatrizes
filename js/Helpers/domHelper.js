@@ -150,7 +150,7 @@ export function mountMatrix() {
   }
 }
 
-function clearNodeChildren(DOMnode) {
+export function clearNodeChildren(DOMnode) {
   while (DOMnode.lastElementChild) {
     DOMnode.removeChild(DOMnode.lastElementChild);
   }
