@@ -168,42 +168,58 @@ function hasEmptyFieldsInMatrix(matrix) {
 
 function validateDecimalInputLive(input) {
   input.addEventListener("input", () => {
-    let raw = input.value.replace(",", "."); // troca vírgula por ponto
+    let raw = input.value.replace(",", "."); // substitui vírgula por ponto
     let result = "";
+    let hasDot = false;
+    let intPart = "";
+    let decPart = "";
 
-    // Não permite que o primeiro caractere seja ponto
+    // evitando começar com ponto
     if (raw.startsWith(".")) {
       input.value = "";
       return;
     }
 
-    let hasDot = false;
-    let intPart = "";
-    let decPart = "";
-
     for (let i = 0; i < raw.length; i++) {
       const char = raw[i];
 
-      if (char === "." && !hasDot) {
+      if (char === ".") {
+        // já existe ponto? Ignora
+        if (hasDot) continue;
+
+        // não pode inserir ponto depois de 6 ou 7 dígitos
+        if (intPart.length >= 6) continue;
+
         hasDot = true;
         continue;
       }
 
-      if (!/[0-9]/.test(char)) continue;
+      if (!/[0-9]/.test(char)) continue; // ignora qualquer coisa que não seja número
+
+      // regras para "0" no início
+      if (intPart === "0" && !hasDot) {
+        continue;
+      }
 
       if (!hasDot) {
-        if (intPart.length < (raw.includes(".") ? 5 : 7)) {
+        if (intPart.length < 7) {
           intPart += char;
         }
       } else {
+        if (intPart.length > 5) continue; // não pode ter mais que 5 números antes do ponto
         if (decPart.length < 2) {
           decPart += char;
         }
       }
     }
 
+    // Se começa com 0 e mais dígitos, manter apenas "0"
+    if (intPart.startsWith("0") && intPart.length > 1 && !hasDot) {
+      intPart = "0";
+    }
+
     result = intPart;
-    if (hasDot) result += "." + decPart;
+    if (hasDot && intPart.length <= 5) result += "." + decPart;
 
     input.value = result;
   });
