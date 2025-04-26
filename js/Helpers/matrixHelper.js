@@ -2,30 +2,25 @@ import * as OperationHelper from "./operationHelper.js";
 import { customizedAlert } from "./alert.js";
 import { clearNodeChildren, getAndValidateHeaderInputs } from "./domHelper.js";
 
-export function createMatrix(
-  matrixRows,
-  matrixColumns,
-  id,
-  classList = "matrixRowDiv"
-) {
-  let matrixContainer = document.querySelector(id);
-
+export function createMatrix(matrixRows, matrixColumns, id, classList = "matrixRowDiv") {
+  const matrixContainer = document.querySelector(id);
+  matrixContainer.innerHTML = ""; // limpa conteúdo anterior
   for (let i = 0; i < matrixRows; i++) {
-    let newRow = document.createElement("div");
+    const newRow = document.createElement("div");
     newRow.classList.add(classList);
     for (let j = 0; j < matrixColumns; j++) {
-      let newColumn = document.createElement("input");
-      newColumn.type = "number";
-      if (classList == "resultMatrixRowDiv") {
+      const newColumn = document.createElement("input");
+      newColumn.type = "text";
+      if (classList === "resultMatrixRowDiv") {
         newColumn.readOnly = true;
         newColumn.value = "";
       } else {
-        //TODO: Retirar quando for para produção
-        newColumn.value = j;
+        newColumn.value = j.toString(); // valor inicial (0 a n)
+        validateDecimalInputLive(newColumn); // aplica validação
       }
-      newRow.append(newColumn);
+      newRow.appendChild(newColumn);
     }
-    matrixContainer.append(newRow);
+    matrixContainer.appendChild(newRow);
   }
 }
 
@@ -169,4 +164,43 @@ function hasEmptyFieldsInMatrix(matrix) {
   });
 
   return hasEmpty;
+}
+
+function validateDecimalInputLive(input) {
+  input.addEventListener("input", () => {
+    let raw = input.value.replace(",", "."); // troca vírgula por ponto
+    let result = "";
+
+    // Não permite que o primeiro caractere seja ponto
+    if (raw.startsWith(".")) {
+      input.value = "";
+      return;
+    }
+
+    let hasDot = false;
+    let intPart = "";
+    let decPart = "";
+
+    for (let i = 0; i < raw.length; i++) {
+      const char = raw[i];
+
+      if (char === "." && !hasDot) {
+        hasDot = true;
+        continue;
+      }
+
+      if (!/[0-9]/.test(char)) continue;
+
+      if (!hasDot && intPart.length < 5) {
+        intPart += char;
+      } else if (hasDot && decPart.length < 2) {
+        decPart += char;
+      }
+    }
+
+    result = intPart;
+    if (hasDot) result += "." + decPart;
+
+    input.value = result;
+  });
 }
