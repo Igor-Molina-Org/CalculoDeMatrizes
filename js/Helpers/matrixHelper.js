@@ -191,10 +191,14 @@ function validateDecimalInputLive(input) {
 
       if (!/[0-9]/.test(char)) continue;
 
-      if (!hasDot && intPart.length < 5) {
-        intPart += char;
-      } else if (hasDot && decPart.length < 2) {
-        decPart += char;
+      if (!hasDot) {
+        if (intPart.length < (raw.includes(".") ? 5 : 7)) {
+          intPart += char;
+        }
+      } else {
+        if (decPart.length < 2) {
+          decPart += char;
+        }
       }
     }
 
