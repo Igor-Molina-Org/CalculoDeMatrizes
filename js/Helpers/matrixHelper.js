@@ -2,30 +2,25 @@ import * as OperationHelper from "./operationHelper.js";
 import { customizedAlert } from "./alert.js";
 import { clearNodeChildren, getAndValidateHeaderInputs } from "./domHelper.js";
 
-export function createMatrix(
-  matrixRows,
-  matrixColumns,
-  id,
-  classList = "matrixRowDiv"
-) {
-  let matrixContainer = document.querySelector(id);
-
+export function createMatrix(matrixRows, matrixColumns, id, classList = "matrixRowDiv") {
+  const matrixContainer = document.querySelector(id);
+  matrixContainer.innerHTML = ""; // limpa conteúdo anterior
   for (let i = 0; i < matrixRows; i++) {
-    let newRow = document.createElement("div");
+    const newRow = document.createElement("div");
     newRow.classList.add(classList);
     for (let j = 0; j < matrixColumns; j++) {
-      let newColumn = document.createElement("input");
-      newColumn.type = "number";
-      if (classList == "resultMatrixRowDiv") {
+      const newColumn = document.createElement("input");
+      newColumn.type = "text";
+      if (classList === "resultMatrixRowDiv") {
         newColumn.readOnly = true;
         newColumn.value = "";
       } else {
-        //TODO: Retirar quando for para produção
-        newColumn.value = j;
+        newColumn.value = j.toString(); // valor inicial (0 a n)
+        validateDecimalInputLive(newColumn); // aplica validação
       }
-      newRow.append(newColumn);
+      newRow.appendChild(newColumn);
     }
-    matrixContainer.append(newRow);
+    matrixContainer.appendChild(newRow);
   }
 }
 
@@ -169,4 +164,63 @@ function hasEmptyFieldsInMatrix(matrix) {
   });
 
   return hasEmpty;
+}
+
+function validateDecimalInputLive(input) {
+  input.addEventListener("input", () => {
+    let raw = input.value.replace(",", "."); // substitui vírgula por ponto
+    let result = "";
+    let hasDot = false;
+    let intPart = "";
+    let decPart = "";
+
+    // evitando começar com ponto
+    if (raw.startsWith(".")) {
+      input.value = "";
+      return;
+    }
+
+    for (let i = 0; i < raw.length; i++) {
+      const char = raw[i];
+
+      if (char === ".") {
+        // já existe ponto? Ignora
+        if (hasDot) continue;
+
+        // não pode inserir ponto depois de 6 ou 7 dígitos
+        if (intPart.length >= 6) continue;
+
+        hasDot = true;
+        continue;
+      }
+
+      if (!/[0-9]/.test(char)) continue; // ignora qualquer coisa que não seja número
+
+      // regras para "0" no início
+      if (intPart === "0" && !hasDot) {
+        continue;
+      }
+
+      if (!hasDot) {
+        if (intPart.length < 7) {
+          intPart += char;
+        }
+      } else {
+        if (intPart.length > 5) continue; // não pode ter mais que 5 números antes do ponto
+        if (decPart.length < 2) {
+          decPart += char;
+        }
+      }
+    }
+
+    // Se começa com 0 e mais dígitos, manter apenas "0"
+    if (intPart.startsWith("0") && intPart.length > 1 && !hasDot) {
+      intPart = "0";
+    }
+
+    result = intPart;
+    if (hasDot && intPart.length <= 5) result += "." + decPart;
+
+    input.value = result;
+  });
 }
