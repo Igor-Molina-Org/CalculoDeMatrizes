@@ -164,6 +164,11 @@ footer {
   border-radius: 50%;
 }
 
+.inputHighlight {
+  background-color: green;
+  color: white;
+}
+
 input:invalid {
   color: red;
 }

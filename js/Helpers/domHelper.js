@@ -5,7 +5,11 @@ export const generateMatrixButton = document.querySelector(
   "#generateMatrixButton"
 );
 
-const domOperator = document.querySelector("#operator");
+export const domOperator = document.querySelector("#operator");
+
+export const matrix1Container = document.querySelector(".matrix1Container");
+export const matrix2Container = document.querySelector(".matrix2Container");
+
 
 export function getAndValidateHeaderInputs() {
   let matrixSizes = getMatrixSizes();
@@ -23,7 +27,7 @@ export function getAndValidateHeaderInputs() {
   }
 }
 
-function getMatrixSizes() {
+export function getMatrixSizes() {
   let matrix1Rows = Number(document.querySelector("#matrix1Rows").value);
   let matrix1Columns = Number(document.querySelector("#matrix1Columns").value);
   let matrix2Rows = Number(document.querySelector("#matrix2Rows").value);
@@ -101,7 +105,6 @@ export function mountMatrix() {
     let matrix2Rows = headerInputValues.matrixSizes[2];
     let matrix2Columns = headerInputValues.matrixSizes[3];
 
-    let matrix1Container = document.querySelector(".matrix1Container");
     clearNodeChildren(matrix1Container);
 
     MatrixHelper.createMatrix(matrix1Rows, matrix1Columns, ".matrix1Container");
@@ -128,7 +131,6 @@ export function mountMatrix() {
       MatrixHelper.calculateMatrix();
     });
 
-    let matrix2Container = document.querySelector(".matrix2Container");
     clearNodeChildren(matrix2Container);
     MatrixHelper.createMatrix(matrix2Rows, matrix2Columns, ".matrix2Container");
 
@@ -154,4 +156,12 @@ export function clearNodeChildren(DOMnode) {
   while (DOMnode.lastElementChild) {
     DOMnode.removeChild(DOMnode.lastElementChild);
   }
+}
+
+export function clearNodeValues(DOMnode) {
+  DOMnode.childNodes.forEach((row) => {
+    row.childNodes.forEach((column) => {
+      column.value = "";
+    });
+  })
 }
