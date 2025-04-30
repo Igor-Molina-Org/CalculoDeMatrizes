@@ -1,6 +1,8 @@
 import * as OperationHelper from "./operationHelper.js";
 import { customizedAlert } from "./alert.js";
-import { clearNodeChildren, getAndValidateHeaderInputs } from "./domHelper.js";
+import { clearNodeChildren, clearNodeValues, getAndValidateHeaderInputs } from "./domHelper.js";
+
+const resultMatrix = document.querySelector(".resultMatrix");
 
 export function createMatrix(matrixRows, matrixColumns, id, classList = "matrixRowDiv") {
   const matrixContainer = document.querySelector(id);
@@ -63,35 +65,13 @@ export function calculateMatrix() {
 
   switch (operator) {
     case "+":
-      let sum = OperationHelper.addMatrices(matrix1Values, matrix2Values);
-
-      for (let i = 0; i < matrix1Values.length; i++) {
-        let row = document.querySelector(
-          `.resultMatrix div:nth-child(${i + 1})`
-        );
-        for (let j = 0; j < matrix1Values[i].length; j++) {
-          let column = row.querySelector(
-            `.resultMatrixRowDiv input:nth-child(${j + 1})`
-          );
-          column.value = formatValue(sum[i][j]);
-        }
-      }
+      clearNodeValues(resultMatrix)
+      OperationHelper.addOrSubMatrices(500, OperationHelper.operations.addition);
       break;
 
     case "-":
-      let sub = OperationHelper.subtractMatrices(matrix1Values, matrix2Values);
-
-      for (let i = 0; i < matrix1Values.length; i++) {
-        let row = document.querySelector(
-          `.resultMatrix div:nth-child(${i + 1})`
-        );
-        for (let j = 0; j < matrix1Values[i].length; j++) {
-          let column = row.querySelector(
-            `.resultMatrixRowDiv input:nth-child(${j + 1})`
-          );
-          column.value = formatValue(sub[i][j]);
-        }
-      }
+      clearNodeValues(resultMatrix)
+      OperationHelper.addOrSubMatrices(500, OperationHelper.operations.subtract);
       break;
 
     case "*":

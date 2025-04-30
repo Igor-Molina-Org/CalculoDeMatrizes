@@ -1,15 +1,48 @@
-export function addMatrices(matrixA, matrixB) {
-  const rows = matrixA.length;
-  const columns = matrixA[0].length;
+import * as DomHelper from "./domHelper.js";
 
-  const sub = Array.from({ length: rows }, () => Array(columns).fill(0));
+export async function addOrSubMatrices(stepTimeInMilliseconds, operation){
+  let matrixSizes = DomHelper.getMatrixSizes();
+  let operatorInput = document.querySelector(".operatorContainer").firstChild;
+  let equalsButton = document.querySelector(".equalsButton");
+  equalsButton.setAttribute("disabled", true)
+  DomHelper.generateMatrixButton.setAttribute("disabled", true)
 
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < columns; j++) {
-      sub[i][j] = Number(matrixA[i][j]) + Number(matrixB[i][j]);
+  //Captura o valor dos inputs, adiciona e remove as classes,
+  //realiza a operação desejada e adiciona os valores na matriz resultado
+  for (let i = 0; i < matrixSizes[0]; i++) {
+    //Container das linhas(rows) das matrizes
+    let matrix1Row = document.querySelector(`.matrix1Container div:nth-child(${i + 1})`);
+    let matrix2Row = document.querySelector(`.matrix2Container div:nth-child(${i + 1})`);
+    let resultMatrixRow = document.querySelector(`.resultMatrix div:nth-child(${i + 1})`);
+
+    for (let j = 0; j < matrixSizes[1]; j++) {
+      //Input da matriz 1
+      let matrix1Column = matrix1Row.querySelector(`.matrixRowDiv input:nth-child(${j + 1})`);      
+
+      await highlight(matrix1Column, stepTimeInMilliseconds)
+
+      await highlight(operatorInput, stepTimeInMilliseconds)
+
+      //Input da matriz 2
+      let matrix2Column = matrix2Row.querySelector(`.matrixRowDiv input:nth-child(${j + 1})`);
+
+      await highlight(matrix2Column, stepTimeInMilliseconds)
+
+      await highlight(equalsButton, stepTimeInMilliseconds)
+
+
+      //Input da matriz resultado
+      let resultMatrixColumn = resultMatrixRow.querySelector(`.resultMatrixRowDiv input:nth-child(${j + 1})`);
+
+      //Realiza a operação de soma
+      resultMatrixColumn.value = operation(Number(matrix1Column.value), Number(matrix2Column.value))
+
+      await highlight(resultMatrixColumn, stepTimeInMilliseconds)
     }
   }
-  return sub;
+
+  equalsButton.removeAttribute("disabled")
+  DomHelper.generateMatrixButton.removeAttribute("disabled")
 }
 
 export function subtractMatrices(matrixA, matrixB) {
@@ -143,3 +176,15 @@ function calculateInverse(matrix, determinant) {
 
   return inverse;
 }
+
+//Destaca o input passado como parametro pela quantidade de tempo determinada
+async function highlight(DOMnode, ms){
+  DOMnode.classList.add("inputHighlight");
+  await new Promise(resolve => setTimeout(resolve, ms));
+  DOMnode.classList.remove("inputHighlight")
+}
+
+export const operations = {
+  addition: (a, b) => a + b,
+  subtract: (a, b) => a - b,
+};
