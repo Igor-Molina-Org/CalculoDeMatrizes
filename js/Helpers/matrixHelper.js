@@ -148,15 +148,20 @@ function hasEmptyFieldsInMatrix(matrix) {
 
 function validateDecimalInputLive(input) {
   input.addEventListener("input", () => {
-    let raw = input.value.replace(",", "."); // substitui vírgula por ponto
-    let result = "";
+    let raw = input.value.replace(",", "."); // troca vírgula por ponto
+    let isNegative = false;
     let hasDot = false;
     let intPart = "";
     let decPart = "";
 
-    // evitando começar com ponto
+    // Detectar e tratar o sinal negativo
+    if (raw.startsWith("-")) {
+      isNegative = true;
+      raw = raw.slice(1); // remove o "-" para processar os números
+    }
+
     if (raw.startsWith(".")) {
-      input.value = "";
+      input.value = isNegative ? "-" : "";
       return;
     }
 
@@ -164,42 +169,36 @@ function validateDecimalInputLive(input) {
       const char = raw[i];
 
       if (char === ".") {
-        // já existe ponto? Ignora
-        if (hasDot) continue;
-
-        // não pode inserir ponto depois de 6 ou 7 dígitos
-        if (intPart.length >= 6) continue;
-
+        if (hasDot || intPart.length > 5 || intPart.length === 0) continue;
         hasDot = true;
         continue;
       }
 
-      if (!/[0-9]/.test(char)) continue; // ignora qualquer coisa que não seja número
+      if (!/[0-9]/.test(char)) continue;
 
-      // regras para "0" no início
-      if (intPart === "0" && !hasDot) {
-        continue;
-      }
+      if (intPart === "0" && !hasDot) continue;
 
       if (!hasDot) {
         if (intPart.length < 7) {
           intPart += char;
         }
       } else {
-        if (intPart.length > 5) continue; // não pode ter mais que 5 números antes do ponto
+        if (intPart.length > 5) continue;
         if (decPart.length < 2) {
           decPart += char;
         }
       }
     }
 
-    // Se começa com 0 e mais dígitos, manter apenas "0"
+    // Caso "0" como primeiro número e sem ponto
     if (intPart.startsWith("0") && intPart.length > 1 && !hasDot) {
       intPart = "0";
     }
 
-    result = intPart;
-    if (hasDot && intPart.length <= 5) result += "." + decPart;
+    let result = (isNegative ? "-" : "") + intPart;
+    if (hasDot && intPart.length <= 5) {
+      result += "." + decPart;
+    }
 
     input.value = result;
   });
