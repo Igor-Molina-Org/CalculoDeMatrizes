@@ -86,24 +86,6 @@ export async function multiplyMatrices(stepTimeInMilliseconds){
   DomHelper.generateMatrixButton.removeAttribute("disabled")
 }
 
-export function multiplyMatrices(matrixA, matrixB) {
-  const rowsA = matrixA.length;
-  const columnsA = matrixA[0].length;
-  const columnsB = matrixB[0].length;
-
-  const result = Array.from({ length: rowsA }, () => Array(columnsB).fill(0));
-
-  for (let i = 0; i < rowsA; i++) {
-    for (let j = 0; j < columnsB; j++) {
-      for (let k = 0; k < columnsA; k++) {
-        result[i][j] += Number(matrixA[i][k]) * Number(matrixB[k][j]);
-      }
-    }
-  }
-
-  return result;
-}
-
 export function divideMatrices(matrixA, matrixB) {
   let determinant = calculateDeterminant(matrixB);
   let minorMatrix = calculateMinorMatrix(matrixB);
