@@ -75,25 +75,8 @@ export function calculateMatrix() {
       break;
 
     case "*":
-      const rowsMatrix1 = matrix1Values.length;
-      const columnsMatrix2 = matrix2Values[0].length;
-
-      let multiplication = OperationHelper.multiplyMatrices(
-        matrix1Values,
-        matrix2Values
-      );
-
-      for (let i = 0; i < rowsMatrix1; i++) {
-        for (let j = 0; j < columnsMatrix2; j++) {
-          let row = document.querySelector(
-            `.resultMatrix div:nth-child(${i + 1})`
-          );
-          let column = row.querySelector(
-            `.resultMatrixRowDiv input:nth-child(${j + 1})`
-          );
-          column.value = formatValue(multiplication[i][j]);
-        }
-      }
+      clearNodeValues(resultMatrix)
+      OperationHelper.multiplyMatrices(100)
       break;
 
     case "/":
