@@ -1,4 +1,6 @@
+import { customizedAlert } from "./alert.js";
 import * as DomHelper from "./domHelper.js";
+
 
 export async function addOrSubMatrices(stepTimeInMilliseconds, operation){
   let matrixSizes = DomHelper.getMatrixSizes();
@@ -45,6 +47,7 @@ export async function addOrSubMatrices(stepTimeInMilliseconds, operation){
   DomHelper.generateMatrixButton.removeAttribute("disabled")
 }
 
+
 export async function multiplyMatrices(stepTimeInMilliseconds){
   let matrixSizes = DomHelper.getMatrixSizes();
   let operatorInput = document.querySelector(".operatorContainer").firstChild;
@@ -55,21 +58,21 @@ export async function multiplyMatrices(stepTimeInMilliseconds){
   //Captura o valor dos inputs, adiciona e remove as classes,
   //realiza a operação desejada e adiciona os valores na matriz resultado
   for (let i = 0; i < matrixSizes[0]; i++) {
-    //Container das linhas(rows) das matrizes
-    let matrix1Row = document.querySelector(`.matrix1Container div:nth-child(${i + 1})`);
-    let matrix2Row = document.querySelector(`.matrix2Container div:nth-child(${i + 1})`);
-    let resultMatrixRow = document.querySelector(`.resultMatrix div:nth-child(${i + 1})`);
     for (let j = 0; j < matrixSizes[3]; j++) {
-      //Input da matriz 2
-      let matrix2Column = matrix2Row.querySelector(`.matrixRowDiv input:nth-child(${j + 1})`);
-
       for (let k = 0; k < matrixSizes[1]; k++) {
+        //Container das linhas(rows) das matrizes
+        let matrix1Row = document.querySelector(`.matrix1Container div:nth-child(${i + 1})`);
+        let matrix2Row = document.querySelector(`.matrix2Container div:nth-child(${k + 1})`);
+        let resultMatrixRow = document.querySelector(`.resultMatrix div:nth-child(${i + 1})`);
+
         //Input da matriz 1
         let matrix1Column = matrix1Row.querySelector(`.matrixRowDiv input:nth-child(${k + 1})`);
         //Highlight da matriz 1
         await highlight(matrix1Column, stepTimeInMilliseconds)
         await highlight(operatorInput, stepTimeInMilliseconds)
 
+        //Input da matriz 2
+        let matrix2Column = matrix2Row.querySelector(`.matrixRowDiv input:nth-child(${j + 1})`);
         //Highlight da matriz 2
         await highlight(matrix2Column, stepTimeInMilliseconds)
         await highlight(equalsButton, stepTimeInMilliseconds)
@@ -85,6 +88,76 @@ export async function multiplyMatrices(stepTimeInMilliseconds){
   equalsButton.removeAttribute("disabled")
   DomHelper.generateMatrixButton.removeAttribute("disabled")
 }
+
+
+/*export async function invertMatrix(stepTimeInMilliseconds, matrix){
+  let matrixSizes = DomHelper.getMatrixSizes();
+  let operatorInput = document.querySelector(".operatorContainer").firstChild;
+  let equalsButton = document.querySelector(".equalsButton");
+  equalsButton.setAttribute("disabled", true)
+  DomHelper.generateMatrixButton.setAttribute("disabled", true)
+
+  for (let i = 0; i < matrixSizes[0]; i++) {
+    //Container das linhas(rows) das matrizes
+    let matrix1Row = document.querySelector(`.matrix1Container div:nth-child(${i + 1})`);
+    let matrix2Row = document.querySelector(`.matrix2Container div:nth-child(${i + 1})`);
+    let resultMatrixRow = document.querySelector(`.resultMatrix div:nth-child(${i + 1})`);
+  }
+  
+   const dim = matrix.length;
+    // Create identity matrix
+    const identity = matrix.map((row, i) => row.map((_, j) => i === j ? 1 : 0));
+
+    // Copy original matrix
+    const copyMatrix = matrix.map(row => [...row]);
+
+    // Gauss-Jordan elimination
+    for (let i = 0; i < dim; i++) {
+        let diagonalElement = copyMatrix[i][i];
+
+        // Find non-zero pivot if diagonal is zero
+        if (diagonalElement === 0) {
+            for (let j = i + 1; j < dim; j++) {
+                if (copyMatrix[j][i] !== 0) {
+                    [copyMatrix[i], copyMatrix[j]] = [copyMatrix[j], copyMatrix[i]];
+                    [identity[i], identity[j]] = [identity[j], identity[i]];
+                    diagonalElement = copyMatrix[i][i];
+                    break;
+                }
+            }
+            if (diagonalElement === 0) {
+               customizedAlert("A matriz não é invertível", "Impossível realizar divisão");
+            }
+        }
+
+        // Normalize the row
+        const factor = diagonalElement;
+        for (let j = 0; j < dim; j++) {
+            copyMatrix[i][j] /= factor;
+            identity[i][j] /= factor;
+        }
+
+        // Eliminate other rows
+        for (let j = 0; j < dim; j++) {
+            if (i !== j) {
+                const factor = copyMatrix[j][i];
+                for (let k = 0; k < dim; k++) {
+                    copyMatrix[j][k] -= factor * copyMatrix[i][k];
+                    identity[j][k] -= factor * identity[i][k];
+                }
+            }
+        }
+    }
+
+    return identity;
+}*/
+
+
+/*export async function divideMatrices(stepTimeInMilliseconds){
+  await invertMatrix(stepTimeInMilliseconds);
+  await multiplyMatrices(stepTimeInMilliseconds);
+}*/
+
 
 export function divideMatrices(matrixA, matrixB) {
   let determinant = calculateDeterminant(matrixB);

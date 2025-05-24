@@ -76,7 +76,7 @@ export function calculateMatrix() {
 
     case "*":
       clearNodeValues(resultMatrix)
-      OperationHelper.multiplyMatrices(100)
+      OperationHelper.multiplyMatrices(500)
       break;
 
     case "/":
