@@ -80,7 +80,13 @@ export async function multiplyMatrices(stepTimeInMilliseconds){
         //Input da matriz resultado
         let resultMatrixColumn = resultMatrixRow.querySelector(`.resultMatrixRowDiv input:nth-child(${j + 1})`);
         //Realiza a operação de multiplicação
-        resultMatrixColumn.value = (Number(matrix1Column.value) * Number(matrix2Column.value));
+        let partialSum = 
+        (Number(resultMatrixColumn.value) || 0) + 
+        (Number(matrix1Column.value) * Number(matrix2Column.value));
+
+        resultMatrixColumn.value = parseFloat(partialSum.toFixed(2));
+
+
         await highlight(resultMatrixColumn, stepTimeInMilliseconds)
         }
       }
