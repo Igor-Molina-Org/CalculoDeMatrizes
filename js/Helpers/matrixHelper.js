@@ -76,34 +76,12 @@ export function calculateMatrix() {
 
     case "*":
       clearNodeValues(resultMatrix)
-      OperationHelper.multiplyMatrices(500)
+      OperationHelper.multiplyMatrices(500);
       break;
 
     case "/":
-      let matrix1 = [];
-      let matrix2 = [];
-      for (let i = 0; i < matrix2Values.length; i++) {
-        matrix1[i] = [];
-        matrix2[i] = [];
-
-        for (let j = 0; j < matrix2Values[i].length; j++) {
-          matrix1[i][j] = Number(matrix1Values[i][j]);
-          matrix2[i][j] = Number(matrix2Values[i][j]);
-        }
-      }
-
-      let division = OperationHelper.divideMatrices(matrix1, matrix2);
-      for (let i = 0; i < matrix1.length; i++) {
-        let row = document.querySelector(
-          `.resultMatrix div:nth-child(${i + 1})`
-        );
-        for (let j = 0; j < matrix1[i].length; j++) {
-          let column = row.querySelector(
-            `.resultMatrixRowDiv input:nth-child(${j + 1})`
-          );
-          column.value = formatValue(division[i][j]);
-        }
-      }
+      clearNodeValues(resultMatrix)
+      OperationHelper.divideMatrices(500);
       break;
   }
 }
