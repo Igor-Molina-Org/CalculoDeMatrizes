@@ -106,9 +106,7 @@ export async function invertMatrix(stepTimeInMilliseconds) {
   let swapped = false;
   let dim = matrixSizes[2]; // Tamanho da matriz quadrada
   //Onde iremos guardar o pivot e factor na matrix1 para melhor visualização das operações
-  let pivotTempInput = document.querySelector(`.matrix1Container div:nth-child(${1})`).querySelector(`.matrixRowDiv input:nth-child(${3})`);
-  let factorTempInput = document.querySelector(`.matrix1Container div:nth-child(${2})`).querySelector(`.matrixRowDiv input:nth-child(${3})`);
-  let usingValueTempInput = document.querySelector(`.matrix1Container div:nth-child(${3})`).querySelector(`.matrixRowDiv input:nth-child(${3})`);
+  let tempInput = document.querySelector(`.matrix1Container div:nth-child(${1})`).querySelector(`.matrixRowDiv input:nth-child(${1})`);
 
   equalsButton.setAttribute("disabled", true);
   DomHelper.generateMatrixButton.setAttribute("disabled", true);
@@ -183,8 +181,8 @@ export async function invertMatrix(stepTimeInMilliseconds) {
     //Guarda o pivot no lugar designado
     operatorInput.value = "pivot";
     await highlight(pivotCurrentInput, stepTimeInMilliseconds);
-    pivotTempInput.value = pivotValue;
-    await highlight(pivotTempInput, stepTimeInMilliseconds);
+    tempInput.value = pivotValue;
+    await highlight(tempInput, stepTimeInMilliseconds);
 
     //Como iremos dividir o numero atual pelo pivot, usamos o operador de divisão
     operatorInput.value = "/";
@@ -197,12 +195,12 @@ export async function invertMatrix(stepTimeInMilliseconds) {
 
       //Highlight na seguite ordem: Pivot, Operador, Numero que iremos dividir, Igual, Numero que iremos dividir
       //Assim mostramos que iremos pegar o pivot, dividir pelo numero que queremos, e botar o resultado no lugar do número que dividimos
-      let dividedMatrixInput = parseFloat(matrixInput.value / pivotValue).toFixed(2);
+      let dividedMatrixInput = parseFloat(matrixInput.value / pivotValue);
       await showOperation(
         "/", 
         matrixInput, 
         operatorInput, 
-        pivotTempInput, 
+        tempInput, 
         equalsButton, 
         dividedMatrixInput,
         matrixInput,
@@ -210,12 +208,12 @@ export async function invertMatrix(stepTimeInMilliseconds) {
       )
 
       //Repete o mesmo, mas com a matriz identidade
-      let dividedIdentityMatrixInput = parseFloat(identityInput.value / pivotValue).toFixed(2);
+      let dividedIdentityMatrixInput = parseFloat(identityInput.value / pivotValue);
       await showOperation(
         "/", 
         identityInput, 
         operatorInput, 
-        pivotTempInput, 
+        tempInput, 
         equalsButton, 
         dividedIdentityMatrixInput,
         identityInput,
@@ -238,8 +236,8 @@ export async function invertMatrix(stepTimeInMilliseconds) {
         let factor = parseFloat(factorInput.value);
         await highlight(factorInput, stepTimeInMilliseconds);
 
-        factorTempInput.value = factor;
-        await highlight(factorTempInput, stepTimeInMilliseconds);
+        tempInput.value = factor;
+        await highlight(tempInput, stepTimeInMilliseconds);
         operatorInput.value = "-";
 
         for (let k = 0; k < dim; k++) {
@@ -251,47 +249,49 @@ export async function invertMatrix(stepTimeInMilliseconds) {
 
           // Update matrix2
           let factoredPivotCurrentInput = factor * parseFloat(pivotCurrentInput.value);
+          tempInput.value = factor;
           await showOperation(
             "*", 
-            factorTempInput, 
+            tempInput, 
             operatorInput, 
             pivotCurrentInput, 
             equalsButton, 
             factoredPivotCurrentInput,
-            usingValueTempInput,
+            tempInput,
             stepTimeInMilliseconds
           )
-          let newTargetInputValue = (parseFloat(targetInput.value) - factoredPivotCurrentInput).toFixed(2);
+          let newTargetInputValue = (parseFloat(targetInput.value) - factoredPivotCurrentInput);
           await showOperation(
             "-", 
             targetInput, 
             operatorInput, 
-            usingValueTempInput, 
+            tempInput, 
             equalsButton, 
             newTargetInputValue, 
             targetInput,
             stepTimeInMilliseconds
           )
 
+          tempInput.value = factor;
           // Update resultMatrix
           let factoredIdentityPivotCurrentInput = factor * parseFloat(identityPivotCurrentInput.value);
           await showOperation(
             "*", 
-            factorTempInput, 
+            tempInput, 
             operatorInput, 
             identityPivotCurrentInput, 
             equalsButton, 
             factoredIdentityPivotCurrentInput,
-            usingValueTempInput,
+            tempInput,
             stepTimeInMilliseconds
           )
 
-          let newIdentityTargetInputValue = (parseFloat(identityTargetInput.value) - factoredIdentityPivotCurrentInput).toFixed(2);
+          let newIdentityTargetInputValue = (parseFloat(identityTargetInput.value) - factoredIdentityPivotCurrentInput);
           await showOperation(
             "-",
             identityTargetInput, 
             operatorInput, 
-            usingValueTempInput,  
+            tempInput,  
             equalsButton, 
             newIdentityTargetInputValue, 
             identityTargetInput,
