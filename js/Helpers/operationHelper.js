@@ -124,6 +124,23 @@ export async function invertMatrix(stepTimeInMilliseconds) {
     matrix1Backup.push(rowBackup);
   }
 
+  let matrix2Backup = [];
+  for (let i = 0; i < dim; i++) {
+    let rowBackup = [];
+    let matrix2Row = document.querySelector(`.matrix2Container div:nth-child(${i + 1})`);
+    for (let j = 0; j < dim; j++) {
+      let input = matrix2Row.querySelector(`.matrixRowDiv input:nth-child(${j + 1})`);
+      rowBackup.push(input.value);
+    }
+    matrix2Backup.push(rowBackup);
+  }
+
+  let determinant = calculateDeterminant(matrix2Backup);
+  if(determinant == 0){
+    customizedAlert("A matriz não é invertível", "Impossível realizar divisão");
+    return swapped;
+  }
+
   //Inicializa a matriz identidade no resultMatrix
   for (let i = 0; i < dim; i++) {
     let resultRow = document.querySelector(`.resultMatrix div:nth-child(${i + 1})`);
@@ -362,6 +379,17 @@ export async function divideMatrices(stepTimeInMilliseconds){
   if(swapped){
     await multiplyMatrices(stepTimeInMilliseconds);
   }
+}
+
+function calculateDeterminant(m) {
+  const n = m.length;
+  if (n === 1) return m[0][0];
+  if (n === 2) return m[0][0]*m[1][1] - m[0][1]*m[1][0];
+
+  return m[0].reduce((det, val, j) => {
+    const sub = m.slice(1).map(row => row.filter((_, col) => col !== j));
+    return det + ((j % 2 === 0 ? 1 : -1) * val * calculateDeterminant(sub));
+  }, 0);
 }
 
 //Destaca o input passado como parametro pela quantidade de tempo determinada
