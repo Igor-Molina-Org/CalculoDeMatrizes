@@ -1,8 +1,12 @@
 import { customizedAlert } from "./alert.js";
 import * as DomHelper from "./domHelper.js";
+import { getStepTimeInMilliseconds } from "./domHelper.js";
 
 
 export async function addOrSubMatrices(stepTimeInMilliseconds, operation){
+
+  stepTimeInMilliseconds = getStepTimeInMilliseconds();
+
   let matrixSizes = DomHelper.getMatrixSizes();
   let operatorInput = document.querySelector(".operatorContainer").firstChild;
   let equalsButton = document.querySelector(".equalsButton");
@@ -49,6 +53,7 @@ export async function addOrSubMatrices(stepTimeInMilliseconds, operation){
 
 
 export async function multiplyMatrices(stepTimeInMilliseconds){
+  stepTimeInMilliseconds = getStepTimeInMilliseconds();
   let matrixSizes = DomHelper.getMatrixSizes();
   let operatorInput = document.querySelector(".operatorContainer").firstChild;
   let equalsButton = document.querySelector(".equalsButton");
@@ -99,6 +104,7 @@ export async function multiplyMatrices(stepTimeInMilliseconds){
 
 
 export async function invertMatrix(stepTimeInMilliseconds) {
+  stepTimeInMilliseconds = getStepTimeInMilliseconds();
   let matrixSizes = DomHelper.getMatrixSizes();
   let equalsButton = document.querySelector(".equalsButton");
   let operatorInput = document.querySelector(".operatorContainer").firstChild;
@@ -349,6 +355,7 @@ export async function invertMatrix(stepTimeInMilliseconds) {
 }
 
 async function showOperation(operationValue, input1, operationInput, input2, equals, operationResult, result, stepTimeInMilliseconds){
+  stepTimeInMilliseconds = getStepTimeInMilliseconds();
   await new Promise(resolve => setTimeout(resolve, stepTimeInMilliseconds/5));
   operationInput.value = operationValue;
   await highlight(input1, stepTimeInMilliseconds);
@@ -360,6 +367,7 @@ async function showOperation(operationValue, input1, operationInput, input2, equ
 }
 
 async function swapRows(rowA, rowB, stepTimeInMilliseconds) {
+  stepTimeInMilliseconds = getStepTimeInMilliseconds();
   let inputsA = rowA.querySelectorAll("input");
   let inputsB = rowB.querySelectorAll("input");
 
@@ -375,6 +383,7 @@ async function swapRows(rowA, rowB, stepTimeInMilliseconds) {
 }
 
 export async function divideMatrices(stepTimeInMilliseconds){
+  stepTimeInMilliseconds = getStepTimeInMilliseconds();
   let swapped = await invertMatrix(stepTimeInMilliseconds);
   if(swapped){
     await multiplyMatrices(stepTimeInMilliseconds);
