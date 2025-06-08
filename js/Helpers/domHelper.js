@@ -165,3 +165,10 @@ export function clearNodeValues(DOMnode) {
     });
   })
 }
+
+export function logOperation(message) {
+  const logContainer = document.getElementById("operationLog");
+  const logEntry = document.createElement("p");
+  logEntry.textContent = message;
+  logContainer.appendChild(logEntry);
+}

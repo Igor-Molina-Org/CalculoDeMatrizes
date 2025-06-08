@@ -5,6 +5,7 @@ import * as DomHelper from "./domHelper.js";
 export async function addOrSubMatrices(stepTimeInMilliseconds, operation){
   let matrixSizes = DomHelper.getMatrixSizes();
   let operatorInput = document.querySelector(".operatorContainer").firstChild;
+  let operator = operatorInput.value.trim();
   let equalsButton = document.querySelector(".equalsButton");
   equalsButton.setAttribute("disabled", true)
   DomHelper.generateMatrixButton.setAttribute("disabled", true)
@@ -37,7 +38,17 @@ export async function addOrSubMatrices(stepTimeInMilliseconds, operation){
       let resultMatrixColumn = resultMatrixRow.querySelector(`.resultMatrixRowDiv input:nth-child(${j + 1})`);
 
       //Realiza a operação de soma
-      resultMatrixColumn.value = operation(Number(matrix1Column.value), Number(matrix2Column.value))
+      const val1 = Number(matrix1Column.value);
+      const val2 = Number(matrix2Column.value);
+      const result = operation(val1, val2);
+      resultMatrixColumn.value = result;
+
+      //Fazendo os logs de soma e subtração
+      if (operator === "+") {
+        DomHelper.logOperation(`Elemento [${i + 1},${j + 1}] da matriz 1 (${val1}) + elemento [${i + 1},${j + 1}] da matriz 2 (${val2}) = ${result}`);
+      } else if (operator === "-") {
+        DomHelper.logOperation(`Elemento [${i + 1},${j + 1}] da matriz 1 (${val1}) - matriz 2 (${val2}) = ${result}`);
+      }
 
       await highlight(resultMatrixColumn, stepTimeInMilliseconds)
     }
@@ -51,6 +62,7 @@ export async function addOrSubMatrices(stepTimeInMilliseconds, operation){
 export async function multiplyMatrices(stepTimeInMilliseconds){
   let matrixSizes = DomHelper.getMatrixSizes();
   let operatorInput = document.querySelector(".operatorContainer").firstChild;
+  let operator = operatorInput.value.trim();
   let equalsButton = document.querySelector(".equalsButton");
   equalsButton.setAttribute("disabled", true)
   DomHelper.generateMatrixButton.setAttribute("disabled", true)
@@ -59,6 +71,10 @@ export async function multiplyMatrices(stepTimeInMilliseconds){
   //realiza a operação desejada e adiciona os valores na matriz resultado
   for (let i = 0; i < matrixSizes[0]; i++) {
     for (let j = 0; j < matrixSizes[3]; j++) {
+
+      //Array que vai armazenar as multiplicações feitas em cada linha e coluna multiplicada
+      let operationSteps = [];
+
       for (let k = 0; k < matrixSizes[1]; k++) {
         //Container das linhas(rows) das matrizes
         operatorInput.value = "*";
@@ -80,16 +96,25 @@ export async function multiplyMatrices(stepTimeInMilliseconds){
 
         //Input da matriz resultado
         let resultMatrixColumn = resultMatrixRow.querySelector(`.resultMatrixRowDiv input:nth-child(${j + 1})`);
+        
         //Realiza a operação de multiplicação
-        let partialSum = 
-        (Number(resultMatrixColumn.value) || 0) + 
-        (Number(matrix1Column.value) * Number(matrix2Column.value));
+        const val1 = Number(matrix1Column.value);
+        const val2 = Number(matrix2Column.value);
+        const previousValue = Number(resultMatrixColumn.value) || 0;
+        const product = val1 * val2;
+        const partialSum = previousValue + product;
 
         resultMatrixColumn.value = parseFloat(partialSum.toFixed(2));
 
+        //Armazena multiplicação no array
+        operationSteps.push(`(${val1}×${val2})`);
 
         await highlight(resultMatrixColumn, stepTimeInMilliseconds)
         }
+
+      // Log após toda a multiplicação da célula ser feita
+      DomHelper.logOperation(`Cálculo do elemento [${i + 1},${j + 1}]: ${operationSteps.join(" + ")} = ${partialSum}`);
+
       }
     }
   equalsButton.removeAttribute("disabled")
