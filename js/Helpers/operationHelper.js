@@ -11,6 +11,7 @@ export async function addOrSubMatrices(stepTimeInMilliseconds, operation){
   let operatorInput = document.querySelector(".operatorContainer").firstChild;
   let operator = operatorInput.value.trim();
   let equalsButton = document.querySelector(".equalsButton");
+  document.getElementById("operationLog").innerHTML = "";
   equalsButton.setAttribute("disabled", true)
   DomHelper.generateMatrixButton.setAttribute("disabled", true)
 
@@ -51,7 +52,7 @@ export async function addOrSubMatrices(stepTimeInMilliseconds, operation){
       if (operator === "+") {
         DomHelper.logOperation(`Elemento [${i + 1},${j + 1}] da matriz 1 (${val1}) + elemento [${i + 1},${j + 1}] da matriz 2 (${val2}) = ${result}`);
       } else if (operator === "-") {
-        DomHelper.logOperation(`Elemento [${i + 1},${j + 1}] da matriz 1 (${val1}) - matriz 2 (${val2}) = ${result}`);
+        DomHelper.logOperation(`Elemento [${i + 1},${j + 1}] da matriz 1 (${val1}) - elemento [${i + 1},${j + 1}] da matriz 2 (${val2}) = ${result}`);
       }
 
       await highlight(resultMatrixColumn, stepTimeInMilliseconds)
@@ -69,6 +70,7 @@ export async function multiplyMatrices(stepTimeInMilliseconds){
   let operatorInput = document.querySelector(".operatorContainer").firstChild;
   let operator = operatorInput.value.trim();
   let equalsButton = document.querySelector(".equalsButton");
+  document.getElementById("operationLog").innerHTML = "";
   equalsButton.setAttribute("disabled", true)
   DomHelper.generateMatrixButton.setAttribute("disabled", true)
 
@@ -79,6 +81,7 @@ export async function multiplyMatrices(stepTimeInMilliseconds){
 
       //Array que vai armazenar as multiplicações feitas em cada linha e coluna multiplicada
       let operationSteps = [];
+      let partialSum = 0;
 
       for (let k = 0; k < matrixSizes[1]; k++) {
         //Container das linhas(rows) das matrizes
@@ -107,7 +110,7 @@ export async function multiplyMatrices(stepTimeInMilliseconds){
         const val2 = Number(matrix2Column.value);
         const previousValue = Number(resultMatrixColumn.value) || 0;
         const product = val1 * val2;
-        const partialSum = previousValue + product;
+        partialSum = previousValue + product;
 
         resultMatrixColumn.value = parseFloat(partialSum.toFixed(2));
 
@@ -119,7 +122,6 @@ export async function multiplyMatrices(stepTimeInMilliseconds){
 
       // Log após toda a multiplicação da célula ser feita
       DomHelper.logOperation(`Cálculo do elemento [${i + 1},${j + 1}]: ${operationSteps.join(" + ")} = ${partialSum}`);
-
       }
     }
   equalsButton.removeAttribute("disabled")
