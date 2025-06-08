@@ -177,3 +177,11 @@ speedSelector.addEventListener("change", (event) => {
 export function getStepTimeInMilliseconds() {
   return stepTimeInMilliseconds;
 }
+
+
+export function logOperation(message) {
+  const logContainer = document.getElementById("operationLog");
+  const logEntry = document.createElement("p");
+  logEntry.textContent = message;
+  logContainer.appendChild(logEntry);
+}
