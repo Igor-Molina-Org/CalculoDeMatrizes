@@ -165,3 +165,23 @@ export function clearNodeValues(DOMnode) {
     });
   })
 }
+
+export let stepTimeInMilliseconds = 500; // valor padrão
+
+// Atualiza globalStepTimeInMilliseconds sempre que o usuário mudar a opção
+const speedSelector = document.getElementById("speedSelector");
+speedSelector.addEventListener("change", (event) => {
+  stepTimeInMilliseconds = parseFloat(event.target.value);
+});
+
+export function getStepTimeInMilliseconds() {
+  return stepTimeInMilliseconds;
+}
+
+
+export function logOperation(message) {
+  const logContainer = document.getElementById("operationLog");
+  const logEntry = document.createElement("p");
+  logEntry.textContent = message;
+  logContainer.appendChild(logEntry);
+}
