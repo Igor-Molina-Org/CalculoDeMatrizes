@@ -6,7 +6,6 @@ export const generateMatrixButton = document.querySelector(
 );
 
 export const domOperator = document.querySelector("#operator");
-
 export const matrix1Container = document.querySelector(".matrix1Container");
 export const matrix2Container = document.querySelector(".matrix2Container");
 
@@ -98,6 +97,7 @@ function checkMatrixSizesCompatibility(matrixSizes, operator) {
 
 export function mountMatrix() {
   let headerInputValues = getAndValidateHeaderInputs();
+  document.getElementById("operationLogHeader").style.display = "block";
 
   if (headerInputValues) {
     let matrix1Rows = headerInputValues.matrixSizes[0];
@@ -169,7 +169,7 @@ export function clearNodeValues(DOMnode) {
 export let stepTimeInMilliseconds = 500; // valor padrão
 
 // Atualiza globalStepTimeInMilliseconds sempre que o usuário mudar a opção
-const speedSelector = document.getElementById("speedSelector");
+export const speedSelector = document.getElementById("speedSelector");
 speedSelector.addEventListener("change", (event) => {
   stepTimeInMilliseconds = parseFloat(event.target.value);
 });
@@ -180,8 +180,10 @@ export function getStepTimeInMilliseconds() {
 
 
 export function logOperation(message) {
+  const opLogCont = document.getElementById("operationLogContainer");
   const logContainer = document.getElementById("operationLog");
   const logEntry = document.createElement("p");
   logEntry.textContent = message;
   logContainer.appendChild(logEntry);
+  opLogCont.scrollTop = opLogCont.scrollHeight;
 }
