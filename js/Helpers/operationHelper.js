@@ -44,19 +44,19 @@ export async function addOrSubMatrices(stepTimeInMilliseconds, operation){
 
 
       //Hihglight da matriz 1
-      await highlight(matrix1Column, stepTimeInMilliseconds)
+      await asyncHighlight(matrix1Column, stepTimeInMilliseconds)
       //Hihglight do operador
-      await highlight(operatorInput, stepTimeInMilliseconds)
+      await asyncHighlight(operatorInput, stepTimeInMilliseconds)
       //Hihglight da matriz 2
-      await highlight(matrix2Column, stepTimeInMilliseconds)
+      await asyncHighlight(matrix2Column, stepTimeInMilliseconds)
       //Hihglight do igual
-      await highlight(equalsButton, stepTimeInMilliseconds)
+      await asyncHighlight(equalsButton, stepTimeInMilliseconds)
 
       //Realiza a operação de soma
       resultMatrixColumn.value = result;
 
       //Highlight da matriz resultado
-      await highlight(resultMatrixColumn, stepTimeInMilliseconds)
+      await asyncHighlight(resultMatrixColumn, stepTimeInMilliseconds)
     }
   }
 
@@ -113,18 +113,18 @@ export async function multiplyMatrices(stepTimeInMilliseconds){
 
 
         //Highlight da matriz 1
-        await highlight(matrix1Column, stepTimeInMilliseconds)
+        await asyncHighlight(matrix1Column, stepTimeInMilliseconds)
         //Highlight do operador
-        await highlight(operatorInput, stepTimeInMilliseconds)
+        await asyncHighlight(operatorInput, stepTimeInMilliseconds)
         //Highlight da matriz 2
-        await highlight(matrix2Column, stepTimeInMilliseconds)
+        await asyncHighlight(matrix2Column, stepTimeInMilliseconds)
         //Highlight do igual
-        await highlight(equalsButton, stepTimeInMilliseconds)
+        await asyncHighlight(equalsButton, stepTimeInMilliseconds)
 
         //Insere valor do resultado na matriz resultado
         resultMatrixColumn.value = parseFloat(partialSum.toFixed(2));
         //Highlight da matriz resultado
-        await highlight(resultMatrixColumn, stepTimeInMilliseconds)
+        await asyncHighlight(resultMatrixColumn, stepTimeInMilliseconds)
         }
       }
     }
@@ -138,6 +138,7 @@ export async function invertMatrix(stepTimeInMilliseconds) {
   stepTimeInMilliseconds = getStepTimeInMilliseconds();
   let matrixSizes = DomHelper.getMatrixSizes();
   let equalsButton = document.querySelector(".equalsButton");
+  let operator = document.querySelector("#operator");
   let operatorInput = document.querySelector(".operatorContainer").firstChild;
   document.getElementById("operationLog").innerHTML = "";
 
@@ -145,6 +146,7 @@ export async function invertMatrix(stepTimeInMilliseconds) {
   let dim = matrixSizes[2]; // Tamanho da matriz quadrada
   //Onde iremos guardar o pivot e factor na matrix1 para melhor visualização das operações
   let tempInput = document.querySelector(`.matrix1Container div:nth-child(${1})`).querySelector(`.matrixRowDiv input:nth-child(${1})`);
+  let tempRow = document.querySelector(`.matrix1Container div:nth-child(${dim})`);
 
   equalsButton.setAttribute("disabled", true);
   DomHelper.generateMatrixButton.setAttribute("disabled", true);
@@ -161,6 +163,7 @@ export async function invertMatrix(stepTimeInMilliseconds) {
     matrix2Backup.push(rowBackup);
   }
 
+  //Checa se o determinante é 0, se for, termina o processo pois não 'é possível inverter a matriz
   let determinant = calculateDeterminant(matrix2Backup);
   if(determinant == 0){
     customizedAlert("A matriz não é invertível", "Impossível realizar divisão");
@@ -196,15 +199,17 @@ export async function invertMatrix(stepTimeInMilliseconds) {
   //Início da inversão
   for (let i = 0; i < dim; i++) {
     //Pega o valor do pivot
-    
     let pivotCurrentRow = document.querySelector(`.matrix2Container div:nth-child(${i + 1})`);
-    let pivotCurrentInput = pivotCurrentRow.querySelector(`.matrixRowDiv input:nth-child(${i + 1})`);
-    let pivotValue = parseFloat(pivotCurrentInput.value);
-    DomHelper.logOperation(`Pivot da linha ${i + 1} é ${pivotValue}`)
+    let pivotCurrentRowInput = pivotCurrentRow.querySelector(`.matrixRowDiv input:nth-child(${i + 1})`);
+    let pivotValue = parseFloat(pivotCurrentRowInput.value);
+    DomHelper.logOperation(`Pivô da linha ${i + 1} é ${Number(pivotValue).toFixed(3)}`)
+
+    //Pega a linha da matriz resultado (identidade)
+    let indentityRow = document.querySelector(`.resultMatrix div:nth-child(${i + 1})`);
 
     //Se o valor for, temos que trocar a linha do pivot atual com outra linha
     if (pivotValue == 0) {
-      DomHelper.logOperation(`Pivot = 0, vamos trocar as linhas`)
+      DomHelper.logOperation(`Pivô = 0, vamos trocar as linhas`)
       swapped = false;
       for (let j = i + 1; j < dim; j++) {
         let candidateRow = document.querySelector(`.matrix2Container div:nth-child(${j + 1})`);
@@ -219,160 +224,108 @@ export async function invertMatrix(stepTimeInMilliseconds) {
             document.querySelector(`.resultMatrix div:nth-child(${j + 1})`),
             stepTimeInMilliseconds
           );
-          pivotValue = parseFloat(pivotCurrentInput.value);
+          pivotValue = parseFloat(pivotCurrentRowInput.value);
           swapped = true;
           break;
         }
-      }
-      //Se após a troca, o pivot ainda for 0, a matriz não é invertível
-      if (!swapped) {
-        customizedAlert("A matriz não é invertível", "Impossível realizar divisão");
-        equalsButton.removeAttribute("disabled");
-        DomHelper.generateMatrixButton.removeAttribute("disabled");
-
-        //Restaura matrix1 antes de sair
-        for (let i = 0; i < matrix1Backup.length; i++) {
-          let matrix1Row = document.querySelector(`.matrix1Container div:nth-child(${i + 1})`);
-          for (let j = 0; j < matrix1Backup[i].length; j++) {
-            let input = matrix1Row.querySelector(`.matrixRowDiv input:nth-child(${j + 1})`);
-            input.value = matrix1Backup[i][j];
-          }
-        }
-        return swapped;
       }
     }
 
     //Guarda o pivot no lugar designado
     operatorInput.value = "pivot";
-    await highlight(pivotCurrentInput, stepTimeInMilliseconds);
+    await asyncHighlight(pivotCurrentRowInput, stepTimeInMilliseconds);
+    await asyncHighlight(operatorInput, stepTimeInMilliseconds);
     tempInput.value = pivotValue;
-    await highlight(tempInput, stepTimeInMilliseconds);
+    await asyncHighlight(tempInput, stepTimeInMilliseconds);
 
     //Como iremos dividir o numero atual pelo pivot, usamos o operador de divisão
     operatorInput.value = "/";
 
-    //Normaliza a linha do pivot, ou seja, divide todos os numeros pelo pivot, fazendo assim, o numero da diagonal principal virará 1.
+    //Highlight na seguite ordem: Linha, Operador, Pivot, Igual, Linha
+    DomHelper.logOperation(`Linha ${i + 1} da matriz original/ Pivô ( ${Number(pivotValue).toFixed(3)} )`)
+    await showOperationLineSingleLine(pivotCurrentRow, operatorInput, tempInput, equalsButton, pivotCurrentRow, stepTimeInMilliseconds)
+
+    //Realiza as operações e coloca o resultado na matriz original
     for (let j = 0; j < dim; j++) {
       let matrixInput = pivotCurrentRow.querySelector(`.matrixRowDiv input:nth-child(${j + 1})`);
-      let identityInput = document.querySelector(`.resultMatrix div:nth-child(${i + 1})`).querySelector(`.resultMatrixRowDiv input:nth-child(${j + 1})`);
-      await new Promise(resolve => setTimeout(resolve, stepTimeInMilliseconds/5));
-
-      //Highlight na seguite ordem: Pivot, Operador, Numero que iremos dividir, Igual, Numero que iremos dividir
-      //Assim mostramos que iremos pegar o pivot, dividir pelo numero que queremos, e botar o resultado no lugar do número que dividimos
       let dividedMatrixInput = (parseFloat(matrixInput.value / pivotValue));
-      DomHelper.logOperation(`Matriz Original[${i + 1}, ${j + 1}]  ( ${matrixInput.value} ) / Pivô ( ${pivotValue} ) = ${dividedMatrixInput}`)
-      await showOperation(
-        "/", 
-        matrixInput, 
-        operatorInput, 
-        tempInput, 
-        equalsButton, 
-        dividedMatrixInput,
-        matrixInput,
-        stepTimeInMilliseconds
-      )
-
-      //Repete o mesmo, mas com a matriz identidade
-      let dividedIdentityMatrixInput = (parseFloat(identityInput.value / pivotValue));
-      DomHelper.logOperation(`Matriz Identidade[${i + 1}, ${j + 1}]  ( ${identityInput.value} ) / Pivô ( ${pivotValue} ) = ${dividedIdentityMatrixInput}`)
-      await showOperation(
-        "/", 
-        identityInput, 
-        operatorInput, 
-        tempInput, 
-        equalsButton, 
-        dividedIdentityMatrixInput,
-        identityInput,
-        stepTimeInMilliseconds
-      )
-      
+      DomHelper.logOperation(`Matriz Original[${i + 1}, ${j + 1}]  ( ${Number(matrixInput.value).toFixed(3)} ) / Pivô ( ${Number(pivotValue).toFixed(3)} ) = ${Number(dividedMatrixInput).toFixed(3)}`)
+      matrixInput.value = dividedMatrixInput;
     }
 
-    //Eliminamos os outros elementos da coluna do pivot
-    //Fazemos isso da seguite maneira:
-    // - Pegamos o numero no qual queremos eliminar, ele tem que estar ou acima ou abaixo do numero que transformamos em 1 com o pivot
-    //- Guardamos ele como fator
-    //- Multiplicamos a linha do pivot pelo fator
-    //Subtraimos a linha do numero que queremos eliminar pela linha multiplicada do pivot
+    
+    //Highlight na seguite ordem: Linha, Operador, Pivot, Igual, Linha
+    DomHelper.logOperation(`Linha ${i + 1} da matriz identidade/ Pivô ( ${Number(pivotValue).toFixed(3)} )`)
+    await showOperationLineSingleLine(indentityRow, operatorInput, tempInput, equalsButton, indentityRow, stepTimeInMilliseconds)
+  
+    //Realiza as operações e coloca o resultado na matriz identidade
+    for (let j = 0; j < dim; j++) {
+      let identityInput = indentityRow.querySelector(`.resultMatrixRowDiv input:nth-child(${j + 1})`);
+      let dividedIdentityMatrixInput = (parseFloat(identityInput.value / pivotValue));
+      DomHelper.logOperation(`Matriz Identidade[${i + 1}, ${j + 1}]  ( ${Number(identityInput.value).toFixed(3)} ) / Pivô ( ${Number(pivotValue).toFixed(3)} ) = ${Number(dividedIdentityMatrixInput).toFixed(3)}`)
+      identityInput.value = dividedIdentityMatrixInput;
+    }
+
     for (let j = 0; j < dim; j++) {
       if (j !== i) {
         operatorInput.value = "factor";
         let targetRow = document.querySelector(`.matrix2Container div:nth-child(${j + 1})`);
         let factorInput = targetRow.querySelector(`.matrixRowDiv input:nth-child(${i + 1})`);
         let factor = parseFloat(factorInput.value);
-        await highlight(factorInput, stepTimeInMilliseconds);
+        DomHelper.logOperation(`Fator da linha ${j + 1} e coluna ${i + 1} = ${Number(factor).toFixed(3)}`)
 
+        await asyncHighlight(factorInput, stepTimeInMilliseconds);
+        await asyncHighlight(operatorInput, stepTimeInMilliseconds);
         tempInput.value = factor;
-        await highlight(tempInput, stepTimeInMilliseconds);
-        operatorInput.value = "-";
+        await asyncHighlight(tempInput, stepTimeInMilliseconds);
+        operatorInput.value = "*";
 
+        DomHelper.logOperation(`Fator *  Linha ${j + 1} na matriz Original`)
+        await showOperationLineSingleLine(pivotCurrentRow, operatorInput, tempInput, equalsButton, tempRow, stepTimeInMilliseconds)
+        for (let k = 0; k < dim; k++) {
+          let pivotCurrentRowInput = pivotCurrentRow.querySelector(`.matrixRowDiv input:nth-child(${k + 1})`);
+          let tempRowInput = tempRow.querySelector(`.matrixRowDiv input:nth-child(${k + 1})`);
+
+          let factoredPivotCurrentInput = (factor * parseFloat(pivotCurrentRowInput.value));
+          DomHelper.logOperation(`Fator ( ${Number(factor).toFixed(3)} ) *  Valor ${k + 1} da linha do Pivô ( ${Number(pivotCurrentRowInput.value).toFixed(3)} ) = ${Number(factoredPivotCurrentInput).toFixed(3)}`)
+          tempInput.value = factor;
+          tempRowInput.value = factoredPivotCurrentInput;  
+        }
+        operatorInput.value = "-";
+        await showOperationLineByLine(targetRow, operatorInput, tempRow, equalsButton, targetRow, stepTimeInMilliseconds)
         for (let k = 0; k < dim; k++) {
           let targetInput = targetRow.querySelector(`.matrixRowDiv input:nth-child(${k + 1})`);
-          let pivotCurrentInput = pivotCurrentRow.querySelector(`.matrixRowDiv input:nth-child(${k + 1})`);
-          DomHelper.logOperation(`Pivô da matriz original na linha ${i + 1} = ${pivotCurrentInput.value}`)
+          let tempRowInput = tempRow.querySelector(`.matrixRowDiv input:nth-child(${k + 1})`);
 
-          let identityTargetInput = document.querySelector(`.resultMatrix div:nth-child(${j + 1})`).querySelector(`.resultMatrixRowDiv input:nth-child(${k + 1})`);
-          let identityPivotCurrentInput = document.querySelector(`.resultMatrix div:nth-child(${i + 1})`).querySelector(`.resultMatrixRowDiv input:nth-child(${k + 1})`);
-          
-
-          // Update matrix2
-          let factoredPivotCurrentInput = (factor * parseFloat(pivotCurrentInput.value));
-          DomHelper.logOperation(`Fator ( ${factor} ) *  Pivô da matriz original ( ${pivotCurrentInput.value} ) = ${factoredPivotCurrentInput}`)
-          tempInput.value = factor;
-          await showOperation(
-            "*", 
-            tempInput, 
-            operatorInput, 
-            pivotCurrentInput, 
-            equalsButton, 
-            factoredPivotCurrentInput,
-            tempInput,
-            stepTimeInMilliseconds
-          )
-
-          
-          let newTargetInputValue = (parseFloat(targetInput.value) - factoredPivotCurrentInput);
-          DomHelper.logOperation(`Matriz Original[${j+1},${k+1}] ( ${targetInput.value} ) -  Valor alterado do pivô ( ${factoredPivotCurrentInput} ) = ${newTargetInputValue}`)
-          await showOperation(
-            "-", 
-            targetInput, 
-            operatorInput, 
-            tempInput, 
-            equalsButton, 
-            newTargetInputValue, 
-            targetInput,
-            stepTimeInMilliseconds
-          )
-
-          DomHelper.logOperation(`Pivô da matriz identidade na linha ${i + 1} = ${identityPivotCurrentInput.value}`)
-          tempInput.value = factor;
-          // Update resultMatrix
-          let factoredIdentityPivotCurrentInput = (factor * parseFloat(identityPivotCurrentInput.value));
-          DomHelper.logOperation(`Fator ( ${factor} ) *  Pivô da matriz identidade ( ${identityPivotCurrentInput.value} ) = ${factoredIdentityPivotCurrentInput}`)
-          await showOperation(
-            "*", 
-            tempInput, 
-            operatorInput, 
-            identityPivotCurrentInput, 
-            equalsButton, 
-            factoredIdentityPivotCurrentInput,
-            tempInput,
-            stepTimeInMilliseconds
-          )
-
-          let newIdentityTargetInputValue = (parseFloat(identityTargetInput.value) - factoredIdentityPivotCurrentInput);
-          DomHelper.logOperation(`Matriz Identidade[${j+1},${k+1}] ( ${identityTargetInput.value} ) -  Valor alterado do pivô ( ${factoredIdentityPivotCurrentInput} ) = ${newIdentityTargetInputValue}`)
-          await showOperation(
-            "-",
-            identityTargetInput, 
-            operatorInput, 
-            tempInput,  
-            equalsButton, 
-            newIdentityTargetInputValue, 
-            identityTargetInput,
-            stepTimeInMilliseconds
-          )
+          let newMatrixTargetInputValue = (parseFloat(targetInput.value) - tempRowInput.value);
+          DomHelper.logOperation(`Matriz Original[${j+1},${k+1}] ( ${Number(targetInput.value).toFixed(3)} ) -  Numero ${k + 1} da linha multiplicada ( ${Number(tempRowInput.value).toFixed(3)} ) = ${Number(newMatrixTargetInputValue).toFixed(3)}`)
+          targetInput.value = newMatrixTargetInputValue;
         }
+
+        let identityTargetRow = document.querySelector(`.resultMatrix div:nth-child(${j + 1})`)
+        let identityPivotCurrentRow = document.querySelector(`.resultMatrix div:nth-child(${i + 1})`)
+        operatorInput.value = "*";
+        DomHelper.logOperation(`Fator *  Linha ${j + 1} na Matriz Identidade`)
+        await showOperationLineSingleLine(identityPivotCurrentRow, operatorInput, tempInput, equalsButton, tempRow, stepTimeInMilliseconds)
+        for (let k = 0; k < dim; k++) {
+          let identityPivotCurrentInput = identityPivotCurrentRow.querySelector(`.resultMatrixRowDiv input:nth-child(${k + 1})`);
+          let tempRowInput = tempRow.querySelector(`.matrixRowDiv input:nth-child(${k + 1})`);
+
+          let factoredIdentityPivotCurrentInput = (factor * parseFloat(identityPivotCurrentInput.value));
+          DomHelper.logOperation(`Fator ( ${factor} ) *  Valor ${k + 1} da linha do Pivô ( ${Number(identityPivotCurrentInput.value).toFixed(3)} ) = ${Number(factoredIdentityPivotCurrentInput).toFixed(3)}`)
+          tempRowInput.value = factoredIdentityPivotCurrentInput;
+        }
+        operatorInput.value = "-";
+        await showOperationLineByLine(identityTargetRow, operatorInput, tempRow, equalsButton, identityTargetRow, stepTimeInMilliseconds)
+        for (let k = 0; k < dim; k++) {
+          let identityTargetInput = identityTargetRow.querySelector(`.resultMatrixRowDiv input:nth-child(${k + 1})`);
+          let tempRowInput = tempRow.querySelector(`.matrixRowDiv input:nth-child(${k + 1})`);
+
+          let newIdentityTargetInputValue = (parseFloat(identityTargetInput.value) - tempRowInput.value);
+          DomHelper.logOperation(`Matriz Identidade[${j+1},${k+1}] ( ${Number((identityTargetInput.value)).toFixed(3)} ) -  Numero ${k + 1} da linha multiplicada (${Number(tempRowInput.value).toFixed(3)} ) = ${Number(newIdentityTargetInputValue).toFixed(3)}`)
+          identityTargetInput.value = newIdentityTargetInputValue;
+        }
+
       }
     }
   }
@@ -401,7 +354,8 @@ export async function invertMatrix(stepTimeInMilliseconds) {
       input.value = matrix1Backup[i][j];
     }
   }
-  operatorInput.value = "/";
+  operatorInput.value = "*";
+  operator.value = "*"
 
   equalsButton.removeAttribute("disabled");
   DomHelper.generateMatrixButton.removeAttribute("disabled");
@@ -409,16 +363,32 @@ export async function invertMatrix(stepTimeInMilliseconds) {
   return swapped = true;
 }
 
-async function showOperation(operationValue, input1, operationInput, input2, equals, operationResult, result, stepTimeInMilliseconds){
+export async function divideMatrices(stepTimeInMilliseconds){
   stepTimeInMilliseconds = getStepTimeInMilliseconds();
+  let swapped = await invertMatrix(stepTimeInMilliseconds);
+  if(swapped){
+    DomHelper.logOperation("Fizemos a inversão, aperte o botão de igual para realizar a multiplicação")
+    DomHelper.logOperation("entre a primeira matriz e a inversa da segunda.")
+    DomHelper.logOperation("Dessa maneira finalizando o processo de divisão.")
+  }
+}
+
+async function showOperationLineSingleLine(rowA, operationInput, singleInput, equalsButton, resultRow, stepTimeInMilliseconds){
   await new Promise(resolve => setTimeout(resolve, stepTimeInMilliseconds/5));
-  operationInput.value = operationValue;
-  await highlight(input1, stepTimeInMilliseconds);
-  await highlight(operationInput, stepTimeInMilliseconds);
-  await highlight(input2, stepTimeInMilliseconds);
-  await highlight(equals, stepTimeInMilliseconds);
-  result.value = operationResult;
-  await highlight(result, stepTimeInMilliseconds);
+  await highlightRow(rowA, stepTimeInMilliseconds);
+  await asyncHighlight(operationInput, stepTimeInMilliseconds);
+  await asyncHighlight(singleInput, stepTimeInMilliseconds);
+  await asyncHighlight(equalsButton, stepTimeInMilliseconds);
+  await highlightRow(resultRow, stepTimeInMilliseconds);
+}
+
+async function showOperationLineByLine(rowA, operationInput, rowB, equalsButton, resultRow, stepTimeInMilliseconds){
+  await new Promise(resolve => setTimeout(resolve, stepTimeInMilliseconds/5));
+  await highlightRow(rowA, stepTimeInMilliseconds);
+  await asyncHighlight(operationInput, stepTimeInMilliseconds);
+  await highlightRow(rowB, stepTimeInMilliseconds);
+  await asyncHighlight(equalsButton, stepTimeInMilliseconds);
+  await highlightRow(resultRow, stepTimeInMilliseconds);
 }
 
 async function swapRows(rowA, rowB, stepTimeInMilliseconds) {
@@ -426,26 +396,37 @@ async function swapRows(rowA, rowB, stepTimeInMilliseconds) {
   let inputsA = rowA.querySelectorAll("input");
   let inputsB = rowB.querySelectorAll("input");
 
+  await highlightRow(rowA, stepTimeInMilliseconds)
+  await highlightRow(rowB, stepTimeInMilliseconds)
+
   for (let i = 0; i < inputsA.length; i++) {
     let columnA = inputsA[i];
     let columnB = inputsB[i]; 
     let temp = columnA.value;
-    await highlight(columnA, stepTimeInMilliseconds)
-    await highlight(columnB, stepTimeInMilliseconds)
     columnA.value = columnB.value;
     columnB.value = temp;
   }
+  await new Promise(resolve => setTimeout(resolve, stepTimeInMilliseconds))
 }
 
-export async function divideMatrices(stepTimeInMilliseconds){
-  stepTimeInMilliseconds = getStepTimeInMilliseconds();
-  let swapped = await invertMatrix(stepTimeInMilliseconds);
-  if(swapped){
-    DomHelper.logOperation("Agora iremos multiplicar a matriz 1 pela matriz 2 invertida")
-    await new Promise(resolve => setTimeout(resolve, stepTimeInMilliseconds * 10));
-    await multiplyMatrices(stepTimeInMilliseconds);
+async function highlightRow(row, stepTimeInMilliseconds) {
+  let inputs = row.querySelectorAll("input");
+  for (const input of inputs) {
+    input.classList.add("inputHighlight");
+  }
+  await new Promise(resolve => setTimeout(resolve, stepTimeInMilliseconds));
+  for (const input of inputs) {
+    input.classList.remove("inputHighlight")
   }
 }
+
+//Destaca o input passado como parametro pela quantidade de tempo determinada
+async function asyncHighlight(DOMnode, stepTimeInMilliseconds){
+  DOMnode.classList.add("inputHighlight");
+  await new Promise(resolve => setTimeout(resolve, stepTimeInMilliseconds));
+  DOMnode.classList.remove("inputHighlight")
+}
+
 
 function calculateDeterminant(m) {
   const n = m.length;
@@ -456,21 +437,6 @@ function calculateDeterminant(m) {
     const sub = m.slice(1).map(row => row.filter((_, col) => col !== j));
     return det + ((j % 2 === 0 ? 1 : -1) * val * calculateDeterminant(sub));
   }, 0);
-}
-
-//Destaca o input passado como parametro pela quantidade de tempo determinada
-async function highlight(DOMnode, stepTimeInMilliseconds){
-  DOMnode.classList.add("inputHighlight");
-  await new Promise(resolve => setTimeout(resolve, stepTimeInMilliseconds));
-  DOMnode.classList.remove("inputHighlight")
-}
-
-async function highlightRow(row, DOMnode, stepTimeInMilliseconds) {
-  let rowDiv = document.querySelector(`.${DOMnode} div:nth-child(${row + 1})`);
-  let inputs = rowDiv.querySelectorAll(`.matrixRowDiv input`);
-  for (let input of inputs) {
-    await highlight(input, stepTimeInMilliseconds);
-  }
 }
 
 export const operations = {
