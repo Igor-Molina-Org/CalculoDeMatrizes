@@ -100,11 +100,6 @@ input,
   padding: 0px 10px 0px 10px;
 }
 
-#m1Label, m2Label {
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
 .operatorContainer input,
 .equalsContainer button,
 #operator {
@@ -125,7 +120,10 @@ input,
   align-items: center;
   width: 100%;
   justify-content: space-evenly;
-  gap: 10px;
+}
+.inputContainerDiv label {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 .inputContainer {
   display: flex;
