@@ -84,7 +84,7 @@ function checkMatrixSizesCompatibility(matrixSizes, operator) {
       ) {
         areSizesCompatible = false;
         customizedAlert(
-          "As matrizes precisam ser quadradas e ter as mesmas dimensões."
+          "Ambas as matrizes precisam ser quadradas com o mesmo número de linhas e colunas!"
         );
       }
       break;

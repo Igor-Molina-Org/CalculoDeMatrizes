@@ -106,10 +106,10 @@ export async function multiplyMatrices(stepTimeInMilliseconds){
         let product = val1 * val2;
         partialSum = previousValue + product;
         //Armazena multiplicação no array
-        operationSteps.push(`(${val1}×${val2})`);
+        operationSteps.push(`(${Number(val1).toFixed(3)}×${Number(val2).toFixed(3)})`);
 
         //Mostra a operação sendo feita
-        DomHelper.logOperation(`Cálculo do elemento [${i + 1},${j + 1}]: ${operationSteps.join(" + ")} = ${partialSum}`);
+        DomHelper.logOperation(`Cálculo do elemento [${i + 1},${j + 1}]: ${operationSteps.join(" + ")} = ${Number(partialSum).toFixed(2)}`);
 
 
         //Highlight da matriz 1
