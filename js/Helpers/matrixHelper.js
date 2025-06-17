@@ -17,7 +17,6 @@ export function createMatrix(matrixRows, matrixColumns, id, classList = "matrixR
         newColumn.readOnly = true;
         newColumn.value = "";
       } else {
-        newColumn.value = j.toString(); // valor inicial (0 a n)
         validateDecimalInputLive(newColumn); // aplica validação
       }
       newRow.appendChild(newColumn);

@@ -312,7 +312,7 @@ export async function invertMatrix(stepTimeInMilliseconds) {
           let tempRowInput = tempRow.querySelector(`.matrixRowDiv input:nth-child(${k + 1})`);
 
           let factoredIdentityPivotCurrentInput = (factor * parseFloat(identityPivotCurrentInput.value));
-          DomHelper.logOperation(`Fator ( ${factor} ) *  Valor ${k + 1} da linha do Pivô ( ${Number(identityPivotCurrentInput.value).toFixed(3)} ) = ${Number(factoredIdentityPivotCurrentInput).toFixed(3)}`)
+          DomHelper.logOperation(`Fator ( ${Number(factor).toFixed(3)} ) *  Valor ${k + 1} da linha do Pivô ( ${Number(identityPivotCurrentInput.value).toFixed(3)} ) = ${Number(factoredIdentityPivotCurrentInput).toFixed(3)}`)
           tempRowInput.value = factoredIdentityPivotCurrentInput;
         }
         operatorInput.value = "-";
@@ -367,7 +367,7 @@ export async function divideMatrices(stepTimeInMilliseconds){
   stepTimeInMilliseconds = getStepTimeInMilliseconds();
   let swapped = await invertMatrix(stepTimeInMilliseconds);
   if(swapped){
-    DomHelper.logOperation("Fizemos a inversão, aperte o botão de igual para realizar a multiplicação")
+    DomHelper.logOperation("Inversão completa! Aperte o botão de igual para realizar a multiplicação")
     DomHelper.logOperation("entre a primeira matriz e a inversa da segunda.")
     DomHelper.logOperation("Dessa maneira finalizando o processo de divisão.")
   }

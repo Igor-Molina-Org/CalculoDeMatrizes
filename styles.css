@@ -2,6 +2,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  color: #f5f7fa;
+  font-family: sans-serif;
 }
 
 a {
@@ -16,13 +18,14 @@ html {
   box-sizing: border-box;
   height: 100%;
   width: 100%;
-  background-color: grey;
+  max-width: 100vw;
+  background-color: #16102d;
 }
 .pageWrapper {
   display: flex;
   flex-direction: column;
   position: relative;
-  min-width: 100vw;
+  width: 100%;
   min-height: 100vh;
 }
 
@@ -32,8 +35,74 @@ input,
   height: 50px;
   text-align: center;
   font-size: 20px;
-  border: 1px solid red;
+  border: 1px solid transparent;
   border-radius: 10%;
+  color: black;
+}
+
+.equalsContainer button:disabled {
+  animation: none;
+  border: none;
+}
+
+.equalsContainer button {
+  width: 75px;
+  height: 50px;
+  text-align: center;
+  font-size: 20px;
+  border: 2px solid white; /* cor da borda (azul neon) */
+  border-radius: 10%;
+  color: black;
+  animation: glow-border 1s ease-in-out infinite;
+}
+
+/* Animação de fade in/out da borda */
+@keyframes glow-border {
+  0% {
+    box-shadow: 0 0 0px white;
+  }
+  50% {
+    box-shadow: 0 0 10px 3px white;
+  }
+  100% {
+    box-shadow: 0 0 0px white;
+  }
+}
+
+
+#generateMatrixButton {
+  background-color: #303dac;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  height: 2rem;
+  padding: 0px 10px 0px 10px;
+}
+#generateMatrixButton:disabled {
+  background-color: darkgray;
+  color: black;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  height: 2rem;
+  padding: 0px 10px 0px 10px;
+}
+
+#speedSelectorContainer{
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+
+#speedSelector, option {
+  background-color: #f6f6fa;
+  color: black;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  height: 2rem;
+  padding: 0px 10px 0px 10px;
+}
+
+#m1Label, m2Label {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .operatorContainer input,
@@ -43,7 +112,7 @@ input,
   font-size: 30px;
 }
 .header {
-  background-color: darkgray;
+  background-color: #22194c;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -74,13 +143,15 @@ input,
 }
 
 .mainContent {
-  margin: 10px;
+  padding: 0px;
   display: flex;
   flex: 1;
   justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
   gap: 5px;
+  max-width: 100vw;
+  margin-bottom: 80px;
 }
 
 .matrix1Container,
@@ -113,7 +184,7 @@ input,
   align-items: center;
   max-width: 450px;
   background-color: #e0f4ff;
-  color: #055160;
+  color: black;
   border: 1px solid #b6e0fe;
   padding: 8px 15px 15px 15px;
   border-radius: 8px;
@@ -122,6 +193,7 @@ input,
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 .alertMessage {
+  color: black;
   margin: 8px 0px 12px 0px;
 }
 .icon img {
@@ -129,18 +201,24 @@ input,
   height: 25px;
 }
 .headerMessage {
+  color: black;
   font-size: 14px;
   font-weight: bold;
 }
 .closeButton {
+  width: 100px;
+  height: 20px;
+  border: solid 1px #16102e;
+  border-radius: 10%;
   font-size: 15px;
+  gap: 10px;
   cursor: pointer;
-  color: #055160;
+  color: black;
 }
 
 footer {
   display: flex;
-  background-color: lightblue;
+  background-color: #1b1636;
   justify-content: space-around;
   align-items: center;
   font-size: 14px;
@@ -153,7 +231,7 @@ footer {
   justify-content: center;
   min-width: 135px;
   gap: 8px;
-  border: 1px solid black;
+  border: 1px solid white;
   border-radius: 8px;
   padding: 5px;
 }

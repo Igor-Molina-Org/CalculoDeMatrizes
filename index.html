@@ -11,7 +11,7 @@
       <div class="header">
         <div class="inputContainerDiv">
           <div class="inputContainer">
-            <label for="matrix1Size">Insira o tamanho da primeira matriz</label>
+            <label id="m1Label" for="matrix1Size">Insira o tamanho da primeira matriz</label>
             <div class="matrixSizeContainer">
               <input
                 type="number"
@@ -20,7 +20,7 @@
                 maxlength="1"
                 name="matrixRowSize"
                 id="matrix1Rows"
-                value="4"
+                value=""
               />
               <input
                 type="number"
@@ -29,7 +29,7 @@
                 maxlength="1"
                 name="matrixColunmSize"
                 id="matrix1Columns"
-                value="4"
+                value=""
               />
             </div>
           </div>
@@ -40,11 +40,11 @@
               name="operator"
               id="operator"
               pattern="^[\+\-\*\/]$"
-              value="+"
+              value=""
             />
           </div>
           <div class="inputContainer">
-            <label for="matrix2Size">Insira o tamanho da segunda matriz</label>
+            <label id="m2Label" for="matrix2Size">Insira o tamanho da segunda matriz</label>
             <div class="matrixSizeContainer">
               <input
                 type="number"
@@ -53,7 +53,7 @@
                 maxlength="1"
                 name="matrixRowSize"
                 id="matrix2Rows"
-                value="4"
+                value=""
               />
               <input
                 type="number"
@@ -62,7 +62,7 @@
                 maxlength="1"
                 name="matrixColunmSize"
                 id="matrix2Columns"
-                value="4"
+                value=""
               />
             </div>
           </div>
@@ -71,7 +71,7 @@
           <button id="generateMatrixButton">Gerar matrizes</button>
         </div>
       </div>
-      <div class="inputContainer">
+      <div class="inputContainer" id="speedSelectorContainer">
         <label for="speedSelector">Velocidade da execução</label>
         <select id="speedSelector">
           <option value="0.1">Instantâneo</option>

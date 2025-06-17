@@ -97,6 +97,8 @@ function checkMatrixSizesCompatibility(matrixSizes, operator) {
 
 export function mountMatrix() {
   let headerInputValues = getAndValidateHeaderInputs();
+  document.getElementById("operationLogHeader").innerHTML = "";
+  document.getElementById("operationLog").innerHTML = "";
   document.getElementById("operationLogHeader").style.display = "block";
 
   if (headerInputValues) {
